@@ -1,0 +1,79 @@
+from datetime import date
+from sqlite3 import Date
+
+from src.service.exceptions import Exceptions
+
+
+class HTMLPage:
+    """ A generic html page """
+
+    header = '<!DOCTYPE html>' \
+             '<html lang="en">' \
+             '<head>' \
+             '<style>' \
+             'table, th, td {border: 1px solid black;border-collapse: collapse;} ' \
+             'th, td {padding: 4px;}' \
+             '</style>' \
+             '<meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge">' \
+             '<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Document</title>' \
+             '</head><body>'
+    closing_header = '</body></html>'
+
+    def __init__(self):
+        self.elements = []
+
+    def add(self, html_element):
+        self.elements.append(html_element)
+
+    def generate_html(self):
+        html = f'{self.header}'
+
+        for element in self.elements:
+            html += element
+
+        html += self.closing_header
+
+        return html
+
+
+class TimetablePage:
+    """ A helper class to generate a generic timetable page """
+
+    def __init__(self, title, rows, cols):
+        self.title = title
+        self.date = date.today()
+        self.rows = rows
+        self.cols = cols
+
+    def generate_html(self):
+        html_page = HTMLPage()
+
+        html_page.add(f'<h1>{self.title}</h1>')
+        html_page.add(f'<div><strong>Generated: {self.date.isoformat()}</strong></div><hr>')
+
+        html_table = '<table>'
+        for i in range(len(self.rows)):
+            row = self.rows[i]
+            html_table += '<tr>'
+
+            row_cols = len(row)
+            for col in row:
+                span = 1 if row_cols == self.cols else self.cols
+
+                if i == 0:
+                    html_table += f'<th colspan="{span}">{col}</th>'
+                else:
+                    html_table += f'<td colspan="{span}">{col}</td>'
+
+            html_table += '</tr>'
+        html_table += '</table>'
+
+        html_page.add(html_table)
+
+        html = html_page.generate_html()
+
+        file = open('timetable.html', 'wt')
+        file.write(html)
+        file.close()
+
+        return html
