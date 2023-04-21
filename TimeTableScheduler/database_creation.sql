@@ -28,9 +28,10 @@ CREATE TABLE TimeSlots (
     weekday TEXT NOT NULL,
     discipline_id INTEGER NOT NULL,
     teacher_id INTEGER NOT NULL,
-    students TEXT NOT NULL,
+    students_id TEXT NOT NULL,
     FOREIGN KEY (discipline_id) REFERENCES Disciplines(id),
-    FOREIGN KEY (teacher_id) REFERENCES Teachers(id)
+    FOREIGN KEY (teacher_id) REFERENCES Teachers(id),
+    FOREIGN KEY (students_id) REFERENCES Students(id)
 );
 
 CREATE TABLE Students (
