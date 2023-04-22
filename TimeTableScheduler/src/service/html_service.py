@@ -1,7 +1,4 @@
 from datetime import date
-from sqlite3 import Date
-
-from src.service.exceptions import Exceptions
 
 
 class HTMLPage:
@@ -39,26 +36,33 @@ class HTMLPage:
 class TimetablePage:
     """ A helper class to generate a generic timetable page """
 
-    def __init__(self, title, rows, cols):
+    def __init__(self, title, headers: [], data: [], path):
         self.title = title
         self.date = date.today()
-        self.rows = rows
-        self.cols = cols
+        self.headers = headers
+        self.data = data
+        self.cols = len(headers)
+        self.path = path
 
     def generate_html(self):
         html_page = HTMLPage()
+
+        full_table_data = [self.headers] + self.data
 
         html_page.add(f'<h1>{self.title}</h1>')
         html_page.add(f'<div><strong>Generated: {self.date.isoformat()}</strong></div><hr>')
 
         html_table = '<table>'
-        for i in range(len(self.rows)):
-            row = self.rows[i]
+        for i in range(len(full_table_data)):
+            row = full_table_data[i]
             html_table += '<tr>'
 
             row_cols = len(row)
             for col in row:
                 span = 1 if row_cols == self.cols else self.cols
+
+                if type(col) is list:
+                    col = ', '.join(col)
 
                 if i == 0:
                     html_table += f'<th colspan="{span}">{col}</th>'
@@ -72,7 +76,7 @@ class TimetablePage:
 
         html = html_page.generate_html()
 
-        file = open('timetable.html', 'wt')
+        file = open(self.path, 'wt')
         file.write(html)
         file.close()
 
