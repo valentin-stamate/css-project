@@ -1,0 +1,129 @@
+name,for_year_1,for_year_2,for_year_3,for_year_4,for_year_5,semester,has_course,has_laboratory,has_seminary
+ACA,1,1,1,1,1,2,0,0,0
+Alte facultati,1,1,1,1,1,2,1,1,1
+Cercetare formala,0,0,0,1,1,2,0,0,1
+Cerc stiintific,1,1,1,1,1,2,0,0,1
+Consultatii,1,1,1,1,1,2,0,0,1
+Scoala doctorala,0,0,0,0,0,2,0,0,1
+Seminarii stiintifice,1,1,1,1,1,2,1,0,0
+Tutoriat,1,1,1,1,1,2,0,0,1
+Programare competitiva,1,1,1,0,0,1,0,0,1
+Educatie fizica,1,1,0,0,0,1,0,0,1
+Programare competitiva,1,1,1,0,0,2,0,0,1
+Etica si integritate academica,1,0,0,0,0,2,1,0,0
+Educatie fizica,1,1,0,0,0,2,1,0,0
+Structuri de date,1,0,0,0,0,1,1,0,1
+Arhitectura calculatoarelor si sisteme de operare,1,0,0,0,0,1,1,1,0
+Logica pentru informatica,1,0,0,0,0,1,1,0,1
+Matematica - Calcul diferential si integral,1,0,0,0,0,1,1,0,1
+Introducere in programare,1,0,0,0,0,1,1,1,0
+Limba engleza I,1,0,0,0,0,1,1,0,1
+Programare orientata-obiect,1,0,0,0,0,2,1,1,0
+Sisteme de operare,1,0,0,0,0,2,1,1,0
+Fundamente algebrice ale informaticii,1,0,0,0,0,2,1,0,1
+Probabilitati si statistica,1,0,0,0,0,2,1,1,0
+Proiectarea algoritmilor,1,0,0,0,0,2,1,0,1
+Limba engleza II,1,0,0,0,0,2,0,0,1
+Retele de calculatoare,0,1,0,0,0,1,1,1,0
+Baze de date,0,1,0,0,0,1,1,1,0
+Limbaje formale automate si compilatoare,0,1,0,0,0,1,1,1,0
+Algoritmica grafurilor,0,1,0,0,0,1,1,0,1
+Limba engleza III,0,1,0,0,0,1,0,0,1
+Calculabilitate decidabilitate si complexitate,0,1,0,1,0,1,1,1,0
+Principii ale limbajelor de programare,0,1,0,0,0,1,1,1,0
+Algoritmi genetici,0,1,0,0,0,1,1,1,0
+Quantum Computing,0,1,0,1,1,1,1,1,0
+Programare Rust,0,1,0,0,0,1,1,0,1
+Tehnologii WEB,0,1,0,0,0,2,1,1,0
+Programare avansata,0,1,0,0,0,2,1,1,0
+Ingineria Programarii,0,1,0,0,0,2,1,1,0
+Practica SGBD,0,1,0,0,0,2,1,1,0
+Limba engleza IV,0,1,0,0,0,2,0,0,1
+Programare functionala,0,1,0,0,0,2,1,1,0
+Introducere in criptografie,0,1,0,0,0,2,1,1,0
+Antreprenoriat si invoare in IT,0,1,0,0,0,2,1,1,0
+Sisteme embedded,0,1,0,0,0,2,1,1,0
+Invatare automata,0,0,1,0,0,1,1,0,1
+Securitatea informatiei,0,0,1,0,0,1,1,1,0
+Inteligenta artificiala,0,0,1,0,0,1,1,1,0
+Programare in Python,0,0,1,0,0,1,1,1,0
+Introducere in .NET,0,0,1,0,0,1,1,1,0
+Dezvoltarea sistemelor fizice folosind microprocesoare,0,0,1,0,0,1,1,1,0
+Retele neuronale,0,0,1,0,0,1,1,1,0
+Animatie 3D: algoritmi si tehnici fundamentale,0,0,1,0,0,1,1,1,0
+Programare si modelare probabilista,0,0,1,0,0,1,1,1,0
+Introducere in realitatea mixta,0,0,1,0,0,1,1,1,0
+Capitole speciale de sisteme de operare,0,0,1,0,0,1,1,1,0
+Tehnici de programare multiprocesor,0,0,1,0,0,1,1,1,0
+Practica in industrie II,0,0,1,0,0,1,0,1,0
+Calcul numeric,0,0,1,0,0,2,1,1,0
+Grafica pe calcualtor si geometrie computationala,0,0,1,0,0,2,1,1,0
+Metodologia realizarii lucrarii de licenta,0,0,1,0,0,2,0,1,0
+Programare bazata pe reguli,0,0,1,0,0,2,1,1,0
+Tehnici de programare pe platforme mobile,0,0,1,0,0,2,1,1,0
+Aspecte computationale in teoria numerelor,0,0,1,0,0,2,1,1,0
+Proiectarea jocurilor,0,0,1,0,0,2,1,1,0
+Psihologia comunicarii profesionale in domeniul IT,0,0,1,0,0,2,1,1,0
+Cloud Computing,0,0,1,0,0,2,1,1,0
+Interactiune om-calculator,0,0,1,0,0,2,1,1,0
+Analiza retelelor media sociale,0,0,1,0,0,2,1,1,0
+Retele Petri si aplicatii,0,0,1,0,0,2,1,1,0
+Smart Card-uri si Aplicatii,0,0,1,0,0,2,1,1,0
+Ingineria software specifica automobilelor,0,0,1,0,0,2,1,1,0
+Introducere in Internetul lucrurilor,0,0,1,0,0,2,1,1,0
+Analiza bazelor de date mari,0,0,0,1,1,1,1,0,1
+Analiza experimentala a algoritmilor,0,0,0,0,1,1,1,0,1
+Aplicatii inovative ale prelucrarii limbajului natural in context anteprenorial,0,0,0,1,1,1,1,0,1
+Arhitecturi hardware in criptografie,0,0,0,0,1,1,1,0,1
+Asistenti vrituali,0,0,0,0,1,1,1,0,1
+Blockchain - fundamente si aplicatii,0,0,0,1,1,1,1,0,1
+Capitole avansate de retele neuronale,0,0,0,1,1,1,1,0,1
+Capitole speciale in inteligenta artificiala,0,0,0,0,1,1,1,0,1
+Cercetari operationale,0,0,0,1,1,1,1,0,1
+Cercetare exploratorie,0,0,0,1,0,1,1,0,1
+Cercetare formala II,0,0,0,0,1,1,1,0,1
+Dezvoltarea aplicatiilor Web,0,0,0,1,1,1,1,0,1
+Invatare profunda cu aplicatii in procesarea limbajului natural,0,0,0,1,1,1,1,0,1
+Lexicologie morfologie si sintaxa computationala,0,0,0,1,1,1,1,0,1
+Logici de incredere in securitatea informatiei,0,0,0,1,1,1,1,0,1
+Managementul proiectelor,0,0,0,1,1,1,1,0,1
+Metode formale in ingineria software,0,0,0,1,1,1,1,0,1
+Metode insiprate din natura,0,0,0,1,0,1,1,0,1
+Rationament automat si interactiv,0,0,0,1,1,1,1,0,1
+Reverse Engineering,0,0,0,1,1,1,1,0,1
+Retele neuronale cu aplicatii in procesarea limbajului natural,0,0,0,0,1,1,1,0,1
+Securitate software,0,0,0,1,1,1,1,0,1
+Securitatea sistemelor de operare si sisteme malitioase,0,0,0,1,1,1,1,0,1
+Securitatea retelelor wireless si a dispozitivelor mobile,0,0,0,1,1,1,1,0,1
+Securitatea comertului electronic,0,0,0,1,1,1,1,0,1
+Semantica si pragmatica limbajului natural,0,0,0,1,1,1,1,0,1
+Sisteme de operare distribuite,0,0,0,1,1,1,1,0,1
+Statistica computationala,0,0,0,1,0,1,1,0,1
+Structuri de date si algoritmi,0,0,0,1,0,1,1,0,1
+Tehnici avansate de ingineria programarii,0,0,0,1,1,1,1,0,1
+Tehnici avansate de criptografie,0,0,0,1,1,1,1,0,1
+Tehnici si metode de criptanaliza,0,0,0,1,1,1,1,0,1
+Tehnologii Java,0,0,0,1,1,1,1,0,1
+Traducere automata,0,0,0,1,1,1,1,0,1
+Vedere artificiala,0,0,0,1,1,1,1,0,1
+Aspecte pragmatice pentru ingineria serviciilor cloud: arhitecturi procese si practici,0,0,0,1,0,2,1,0,1
+Asistenti virtuali,0,0,0,1,0,2,1,0,1
+Analiza experimentala a algoritmilor,0,0,0,1,0,2,1,0,1
+Capitole speciale de invatare automata,0,0,0,1,0,2,1,0,1
+Capitole speciale in Vedere artificiala,0,0,0,1,0,2,1,0,1
+Calitatea sistemelor software,0,0,0,1,0,2,1,0,1
+Cercetare formala I,0,0,0,1,0,2,1,0,1
+Data mining,0,0,0,1,0,2,1,0,1
+Etica si integritate academica,0,0,0,0,1,2,1,0,0
+Limbaje de scripturi,0,0,0,1,0,2,1,0,1
+Metodologia realizarii lucrarii de dizertatie,0,0,0,0,1,2,0,1,0
+Modelare sistemelor distribuite,0,0,0,1,0,2,1,0,1
+Modele de securitate,0,0,0,1,0,2,1,0,1
+Programare concurenta si distribuita,0,0,0,1,0,2,1,0,1
+Practica profesionala/cercetare,0,0,0,0,1,2,0,1,0
+Prelucrarea statistica a limbajului natural,0,0,0,1,0,2,1,0,1
+Prelucrarea vorbirii si siteme fuzzy,0,0,0,1,0,2,1,0,1
+Protocoale de securitate. Modelare si verificare,0,0,0,1,0,2,1,0,1
+Sisteme bazate pe evenimente,0,0,0,1,0,2,1,0,1
+Specificare si verificarea sistemelor,0,0,0,1,0,2,1,0,1
+Securitatea retelelor de calculatoare,0,0,0,1,0,2,1,0,1
