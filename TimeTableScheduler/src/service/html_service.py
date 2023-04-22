@@ -36,12 +36,12 @@ class HTMLPage:
 class TimetablePage:
     """ A helper class to generate a generic timetable page """
 
-    def __init__(self, title, headers: [], data: [], cols, path):
+    def __init__(self, title, headers: [], data: [], path):
         self.title = title
         self.date = date.today()
         self.headers = headers
         self.data = data
-        self.cols = cols
+        self.cols = len(headers)
         self.path = path
 
     def generate_html(self):

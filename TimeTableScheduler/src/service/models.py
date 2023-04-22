@@ -1,6 +1,6 @@
 class ProgrammedClass:
 
-    def __init__(self, day, to, from_, group, group_class, year, class_name, class_type, professors, rooms, frequency='', package=''):
+    def __init__(self, day, to, from_, group, group_class, year, class_name, class_type, professors, room, frequency='', package=''):
         self.day = day
         self.to = to
         self.from_ = from_
@@ -10,7 +10,7 @@ class ProgrammedClass:
         self.class_name = class_name
         self.class_type = class_type
         self.professors = professors
-        self.rooms = rooms
+        self.room = room
         self.frequency = frequency
         self.package = package
 
@@ -28,14 +28,14 @@ class ProgrammedClass:
 
     @staticmethod
     def get_list_for_group_timetable(pc):
-        return [pc.to, pc.from_, pc.class_name, pc.class_type, pc.professors, pc.rooms, pc.frequency, pc.package]
+        return [pc.to, pc.from_, pc.class_name, pc.class_type, pc.professors, pc.room, pc.frequency, pc.package]
 
     @staticmethod
     def get_list_for_group_type_timetable(pc):
         full_group = ProgrammedClass.get_full_group_identifier(pc)
-        return [pc.to, pc.from_, full_group, pc.class_name, pc.class_type, pc.professors, pc.rooms, pc.frequency, pc.package]
+        return [pc.to, pc.from_, full_group, pc.class_name, pc.class_type, pc.professors, pc.room, pc.frequency, pc.package]
 
     @staticmethod
     def get_list_for_professor_timetable(pc):
         full_group = ProgrammedClass.get_full_group_identifier(pc)
-        return [pc.to, pc.from_, pc.class_name, pc.class_type, full_group, pc.rooms, pc.frequency, pc.package]
+        return [pc.to, pc.from_, pc.class_name, pc.class_type, full_group, pc.room, pc.frequency, pc.package]
