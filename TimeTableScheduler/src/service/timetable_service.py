@@ -8,6 +8,7 @@ class TimetableGenerator:
     year_group_headers = ['De la', 'Pana la', 'Grupa', 'Disciplina', 'Tip', 'Profesor', 'Sala', 'Precventa', 'Packet']
     professor_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Sala', 'Precventa', 'Packet']
     room_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Studenti', 'Precventa', 'Packet']
+    classes_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Profesor', 'Sala', 'Precventa', 'Packet']
 
     def __init__(self, programmed_classes: List[ProgrammedClass]):
         self.programmed_classes = programmed_classes
@@ -105,6 +106,20 @@ class TimetableGenerator:
 
         for p_class in classes:
             key = p_class.room
+
+            if key not in categorized_classes:
+                categorized_classes[key] = []
+
+            categorized_classes[key].append(p_class)
+
+        return categorized_classes
+
+    @staticmethod
+    def categorize_by_class(classes: List[ProgrammedClass]):
+        categorized_classes = {}
+
+        for p_class in classes:
+            key = p_class.class_name
 
             if key not in categorized_classes:
                 categorized_classes[key] = []
@@ -238,6 +253,20 @@ class TimetableGenerator:
         html_page = HTMLPage()
 
         html_page.add('<h1>Orar Discipline</h1>')
+
+        categorized_classes = self.categorize_by_class(self.programmed_classes)
+        html_page.add('<ul>')
+        for class_name in categorized_classes.keys():
+            classes = categorized_classes[class_name]
+            html_name = f'{class_name}.html'
+
+            html_page.add(f'<li><a href="pages/{html_name}">{class_name}</a></li>')
+
+            data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_professor_timetable)
+            html_table = TimetablePage(f'Orar {class_name}', self.room_headers, data, f'./html/pages/{html_name}')
+            html_table.generate_html()
+
+        html_page.add('</ul>')
 
         html = html_page.generate_html()
         file = open('./html/classes.html', 'wt')

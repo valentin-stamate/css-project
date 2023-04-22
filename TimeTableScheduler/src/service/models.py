@@ -39,3 +39,8 @@ class ProgrammedClass:
     def get_list_for_professor_timetable(pc):
         full_group = ProgrammedClass.get_full_group_identifier(pc)
         return [pc.to, pc.from_, pc.class_name, pc.class_type, full_group, pc.room, pc.frequency, pc.package]
+
+    @staticmethod
+    def get_list_for_class_timetable(pc):
+        full_group = ProgrammedClass.get_full_group_identifier(pc)
+        return [pc.to, pc.from_, pc.class_name, pc.class_type, full_group, pc.professors, pc.room, pc.frequency, pc.package]
