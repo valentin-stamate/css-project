@@ -7,6 +7,7 @@ class TimetableGenerator:
     group_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Sala', 'Precventa', 'Packet']
     year_group_headers = ['De la', 'Pana la', 'Grupa', 'Disciplina', 'Tip', 'Profesor', 'Sala', 'Precventa', 'Packet']
     professor_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Sala', 'Precventa', 'Packet']
+    room_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Studenti', 'Precventa', 'Packet']
 
     def __init__(self, programmed_classes: List[ProgrammedClass]):
         self.programmed_classes = programmed_classes
@@ -98,6 +99,20 @@ class TimetableGenerator:
 
         return new_data
 
+    @staticmethod
+    def categorize_by_rooms(classes: List[ProgrammedClass]):
+        categorized_classes = {}
+
+        for p_class in classes:
+            key = p_class.room
+
+            if key not in categorized_classes:
+                categorized_classes[key] = []
+
+            categorized_classes[key].append(p_class)
+
+        return categorized_classes
+
     def generate_main_page(self):
         html_page = HTMLPage()
 
@@ -131,7 +146,7 @@ class TimetableGenerator:
             html_page.add(f'<li><a href="pages/{html_name}">Anul {year_key}</a>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
-            html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data, 9, f'./html/pages/{html_name}')
+            html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
             # Generates the group type timetable
@@ -143,7 +158,7 @@ class TimetableGenerator:
                 html_page.add(f'<li><a href="pages/{html_name}">Grupa {group_type_key}</a>')
 
                 data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
-                html_table = TimetablePage(f'Orar {group_type_key}', self.year_group_headers, data, 9, f'./html/pages/{html_name}')
+                html_table = TimetablePage(f'Orar {group_type_key}', self.year_group_headers, data, f'./html/pages/{html_name}')
                 html_table.generate_html()
 
                 # Generates the group timetable
@@ -157,7 +172,7 @@ class TimetableGenerator:
 
                     data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_timetable)
 
-                    html_table = TimetablePage(f'Orar {group_key}', self.group_headers, data, 8, f'./html/pages/{html_name}')
+                    html_table = TimetablePage(f'Orar {group_key}', self.group_headers, data, f'./html/pages/{html_name}')
                     html_table.generate_html()
 
                 html_page.add('</ul></li>')
@@ -185,7 +200,7 @@ class TimetableGenerator:
             html_page.add(f'<li><a href="pages/{html_name}">{professor}</a></li>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_professor_timetable)
-            html_table = TimetablePage(f'Orar {professor}', self.professor_headers, data, 8, f'./html/pages/{html_name}')
+            html_table = TimetablePage(f'Orar {professor}', self.professor_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
         html_page.add('</ul>')
@@ -199,6 +214,20 @@ class TimetableGenerator:
         html_page = HTMLPage()
 
         html_page.add('<h1>Orar Sali</h1>')
+
+        categorized_classes = self.categorize_by_rooms(self.programmed_classes)
+        html_page.add('<ul>')
+        for room in categorized_classes.keys():
+            classes = categorized_classes[room]
+            html_name = f'{room}.html'
+
+            html_page.add(f'<li><a href="pages/{html_name}">{room}</a></li>')
+
+            data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_professor_timetable)
+            html_table = TimetablePage(f'Orar {room}', self.room_headers, data, f'./html/pages/{html_name}')
+            html_table.generate_html()
+
+        html_page.add('</ul>')
 
         html = html_page.generate_html()
         file = open('./html/rooms.html', 'wt')
