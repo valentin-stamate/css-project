@@ -6,6 +6,7 @@ from src.service.models import ProgrammedClass
 class TimetableGenerator:
     group_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Sala', 'Precventa', 'Packet']
     year_group_headers = ['De la', 'Pana la', 'Grupa', 'Disciplina', 'Tip', 'Profesor', 'Sala', 'Precventa', 'Packet']
+    professor_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Sala', 'Precventa', 'Packet']
 
     def __init__(self, programmed_classes: List[ProgrammedClass]):
         self.programmed_classes = programmed_classes
@@ -67,6 +68,19 @@ class TimetableGenerator:
         return categorized_classes
 
     @staticmethod
+    def categorize_by_professor(classes: List[ProgrammedClass]):
+        categorized_classes = {}
+
+        for p_class in classes:
+            for professor in p_class.professors:
+                if professor not in categorized_classes:
+                    categorized_classes[professor] = []
+
+                categorized_classes[professor].append(p_class)
+
+        return categorized_classes
+
+    @staticmethod
     def transform_for_timetable(data: List[ProgrammedClass], lambda_):
         """ Converts the categorized data of ProgrammedClass into a categorized data of list """
 
@@ -90,10 +104,10 @@ class TimetableGenerator:
         html_page.add('<h1>Orar</h1>')
         html_page.add('<p></p><h3>Facultatea de Informatica</h3>')
         html_page.add('<ul>'
-                      '<li><a href="students.html" target="_blank">Studenti</a></li>'
-                      '<li><a href="professors.html" target="_blank">Profesori</a></li>'
-                      '<li><a href="rooms.html" target="_blank">Sali</a></li>'
-                      '<li><a href="classes.html" target="_blank">Discipline</a></li>'
+                      '<li><a href="students.html">Studenti</a></li>'
+                      '<li><a href="professors.html">Profesori</a></li>'
+                      '<li><a href="rooms.html">Sali</a></li>'
+                      '<li><a href="classes.html">Discipline</a></li>'
                       '</ul>')
         html_page.add('<p></p><div>Generated with <b>SmartTimetable</b></div>')
 
@@ -161,6 +175,20 @@ class TimetableGenerator:
         html_page = HTMLPage()
 
         html_page.add('<h1>Orar Profesori</h1>')
+
+        categorized_classes = self.categorize_by_professor(self.programmed_classes)
+        html_page.add('<ul>')
+        for professor in categorized_classes.keys():
+            classes = categorized_classes[professor]
+            html_name = f'{professor}.html'
+
+            html_page.add(f'<li><a href="pages/{html_name}">{professor}</a></li>')
+
+            data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_professor_timetable)
+            html_table = TimetablePage(f'Orar {professor}', self.professor_headers, data, 8, f'./html/pages/{html_name}')
+            html_table.generate_html()
+
+        html_page.add('</ul>')
 
         html = html_page.generate_html()
         file = open('./html/professors.html', 'wt')
