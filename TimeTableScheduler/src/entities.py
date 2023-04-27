@@ -1,5 +1,5 @@
 class Teachers:
-    def __init__(self, id, name, title):
+    def __init__(self, name, title, id='0'):
         self.id = id
         self.name = name
         self.title = title
