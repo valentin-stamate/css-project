@@ -22,6 +22,7 @@ class SchedulerApp:
     }
 
     def __init__(self, master):
+        self.selected_year = None
         self.master = master
         self.master.title("Scheduler App")
         self.notebook = ttk.Notebook(self.master, width=SchedulerApp.WIDTH, height=SchedulerApp.HEIGHT)
@@ -142,7 +143,26 @@ class SchedulerApp:
     def create_insert_form(self, frame, name, tree):
         add_font = Font(size=13)
         if name == "Student Groups":
-            pass
+
+            add_label = tk.Label(frame, text="Add student group:", font=add_font)
+            values = ["Year 1", "Year 2", "Year 3", "Master 1", "Master 2"]
+            selected_value = tk.StringVar()
+            dropdown = ttk.Combobox(frame, textvariable=selected_value, values=values)
+            dropdown.bind("<<ComboboxSelected>>", self.on_select)
+            year_label = tk.Label(frame, text="Year:")
+            year_entry = tk.Entry(frame)
+            add_label.pack(pady=5)
+            year_label.pack(pady=2)
+            dropdown.pack(pady=2)
+
+            name_label = tk.Label(frame, text="Name:")
+            name_entry = tk.Entry(frame)
+            name_label.pack(pady=2)
+            name_entry.pack(pady=2)
+
+            add_button = tk.Button(frame, text="Add",
+                                   command=lambda: Utils.add_student_group(self.selected_year, name_entry, tree))
+            add_button.pack(pady=10)
         elif name == "Teachers":
             add_label = tk.Label(frame, text="Add teacher:", font=add_font)
             name_label = tk.Label(frame, text="Name:")
@@ -166,3 +186,8 @@ class SchedulerApp:
             pass
         else:
             print('invalid option')
+
+    def on_select(self, event):
+        selected_value = event.widget.get()
+        print(f"Selected value: {selected_value}")
+        self.selected_year = selected_value

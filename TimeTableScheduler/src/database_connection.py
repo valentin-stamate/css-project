@@ -1,9 +1,20 @@
 import sqlite3
 
-from src.entities import Teachers
+from src.entities import Teachers, StudentGroups
 
 
 class DatabaseConnection:
+    converted_years_db = {
+        1: "Year 1",
+        2: "Year 2",
+        3: "Year 3",
+        4: "Master 1",
+        5: "Master 2",
+    }
+    converted_boolean_db = {
+        1: "Yes",
+        0: "No"
+    }
     __instance = None
 
     def __init__(self):
@@ -26,7 +37,7 @@ class DatabaseConnection:
     def get_all_rows(self, table_name):
         self.cursor.execute(f"SELECT * FROM {table_name}")
         rows = self.cursor.fetchall()
-        return rows
+        return self.format_data(table_name, rows)
 
     def get_all_rows_by_column(self, table_name, column, value):
         self.cursor.execute(f"SELECT * FROM {table_name} WHERE {column} = {value}")
@@ -49,13 +60,15 @@ class DatabaseConnection:
                 f"{discipline.has_course}, " \
                 f"{discipline.has_laboratory}, " \
                 f"{discipline.has_seminary})"
-        self.execute_query(query)
+        return self.execute_query(query)
 
-    def insert_group(self, students):
-        query = f"INSERT INTO students (year, student_group) VALUES " \
-                f"({students.year}, " \
-                f"'{students.student_group}')"
-        self.execute_query(query)
+    def insert_group(self, group: StudentGroups):
+        if self.get_student_group(group):
+            return 1
+        query = f"INSERT INTO StudentGroups (year, group_name) VALUES " \
+                f"({group.year}, " \
+                f"'{group.group_name}')"
+        return self.execute_query(query)
 
     def insert_room(self, room):
         query = f"INSERT INTO Rooms (name, can_host_course, can_host_laboratory, can_host_seminary) VALUES " \
@@ -83,3 +96,35 @@ class DatabaseConnection:
 
     def get_room(self, room):
         return self.get_all_rows_by_column('Rooms', 'name', f"'{room.name}'") != []
+
+    def get_student_group(self, group):
+        rows = self.get_all_rows_by_column('StudentGroups', 'group_name', f"'{group.group_name}'")
+        print(rows)
+        for row in rows:
+            print(row)
+            if row[1] == group.year:
+                return True
+        return False
+
+    def format_data(self, table_name, rows):
+        if table_name == 'StudentGroups':
+            return self.replace(rows, 1, DatabaseConnection.converted_years_db)
+        elif table_name == 'Rooms':
+            _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
+            _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
+            return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
+        elif table_name == 'Disciplines':
+            _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
+            _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
+            return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
+        else:
+            pass
+        return rows
+
+    def replace(self, rows, index: int, values):
+        updated_rows = []
+        for row in rows:
+            updated_row = list(row)
+            updated_row[index] = values[updated_row[index]]
+            updated_rows.append(updated_row)
+        return updated_rows

@@ -35,9 +35,11 @@ class TimeSlots:
         self.students = students
 
 
-class Students:
-    def __init__(self, id, year, student_group, timeslots: TimeSlots):
+class StudentGroups:
+    def __init__(self, year, group_name, timeslots=None, id='0'):
+        if timeslots is None:
+            timeslots = []
         self.id = id
         self.year = year
-        self.student_group = student_group
+        self.group_name = group_name
         self.timeslots = timeslots
