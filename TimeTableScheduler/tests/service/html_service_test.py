@@ -26,6 +26,10 @@ class TestTimetablePage(unittest.TestCase):
 
 class TestTimetableService(unittest.TestCase):
 
+    def test_generate_all_timetables(self):
+        timetable_service = TimetableGenerator(TIMETABLE_MOCK)
+
+        timetable_service.generate_all()
 
     def test_main_page_generation(self):
         timetable_service = TimetableGenerator(TIMETABLE_MOCK)

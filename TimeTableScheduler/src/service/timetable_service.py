@@ -131,6 +131,12 @@ class TimetableGenerator:
 
         return categorized_classes
 
+    def generate_all(self):
+        self.generate_main_page()
+        self.generate_classes_page()
+        self.generate_student_page()
+        self.generate_professors_page()
+
     def generate_main_page(self):
         html_page = HTMLPage()
 
