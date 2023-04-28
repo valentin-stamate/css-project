@@ -1,3 +1,4 @@
+import os
 from typing import List
 from src.service.html_service import HTMLPage, TimetablePage
 from src.service.models import ProgrammedClass
@@ -11,6 +12,8 @@ class TimetableGenerator:
     classes_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Profesor', 'Sala', 'Precventa', 'Packet']
 
     def __init__(self, programmed_classes: List[ProgrammedClass]):
+        if not os.path.exists("html/pages"):
+            os.makedirs("html/pages")
         self.programmed_classes = programmed_classes
 
     @staticmethod
