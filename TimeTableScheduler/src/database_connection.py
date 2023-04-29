@@ -1,6 +1,6 @@
 import sqlite3
 
-from src.entities import Teachers, StudentGroups
+from src.entities import Teachers, StudentGroups, TimeSlots
 
 
 class DatabaseConnection:
@@ -35,12 +35,24 @@ class DatabaseConnection:
         self.connection.close()
 
     def get_all_rows(self, table_name):
+        return self.format_data(table_name, self.get_all_rows_unformatted(table_name))
+
+    def get_all_rows_unformatted(self, table_name):
         self.cursor.execute(f"SELECT * FROM {table_name}")
-        rows = self.cursor.fetchall()
-        return self.format_data(table_name, rows)
+        return self.cursor.fetchall()
 
     def get_all_rows_by_column(self, table_name, column, value):
         self.cursor.execute(f"SELECT * FROM {table_name} WHERE {column} = {value}")
+        rows = self.cursor.fetchall()
+        return rows
+
+    def get_all_rows_by_columns(self, table_name, column1, value1, column2, value2):
+        self.cursor.execute(f"SELECT * FROM {table_name} WHERE {column1} = {value1} AND {column2} = {value2}")
+        rows = self.cursor.fetchall()
+        return rows
+
+    def get_all_rows_by_columns_3(self, table_name, column1, value1, column2, value2, column3, value3):
+        self.cursor.execute(f"SELECT * FROM {table_name} WHERE {column1} = {value1} AND {column2} = {value2} AND {column3} = {value3}")
         rows = self.cursor.fetchall()
         return rows
 
@@ -76,6 +88,19 @@ class DatabaseConnection:
                 f"{room.can_host_course}, " \
                 f"{room.can_host_laboratory}, " \
                 f"{room.can_host_seminary})"
+        self.execute_query(query)
+
+    def insert_schedule(self, schedule: TimeSlots):
+        query = f"INSERT INTO TimeSlots (time, weekday, discipline_id, teacher_id, student_group_id, is_course, is_laboratory, is_seminary, room_id) VALUES " \
+                f"('{schedule.time}', " \
+                f"'{schedule.weekday}', " \
+                f"{schedule.discipline}, " \
+                f"{schedule.teacher}, " \
+                f"{schedule.students}, " \
+                f"{schedule.is_course}, " \
+                f"{schedule.is_laboratory}, " \
+                f"{schedule.is_seminary}, " \
+                f"{schedule.room})"
         self.execute_query(query)
 
     def execute_query(self, query):
@@ -117,6 +142,29 @@ class DatabaseConnection:
             _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
             _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
             return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
+        elif table_name == 'TimeSlots':
+            formatted = []
+            for row in rows:
+                _ = list(row)
+                _[3] = self.get_all_rows_by_column("Disciplines", "id", _[3])[0][1]
+                _[4] = self.get_all_rows_by_column("Teachers", "id", _[4])[0][1]
+
+                student_group = self.get_all_rows_by_column("StudentGroups", "id", _[5])[0]
+                if int(student_group[1]) > 3:
+                    _[5] = student_group[2]
+                else:
+                    _[5] = f"{student_group[1]}{student_group[2]}"
+
+                _[9] = self.get_all_rows_by_column("Rooms", "id", _[9])[0][1]
+
+                class_type = "Curs" if _[6] else ("Laborator" if _[7] else "Seminar")
+                _[6] = class_type
+                del _[7]
+                del _[7]
+
+
+                formatted.append(_)
+            return formatted
         else:
             pass
         return rows

@@ -39,7 +39,12 @@ CREATE TABLE TimeSlots (
     discipline_id INTEGER NOT NULL,
     teacher_id INTEGER NOT NULL,
     student_group_id INTEGER NOT NULL,
+    is_course BOOLEAN NOT NULL,
+    is_laboratory BOOLEAN NOT NULL,
+    is_seminary BOOLEAN NOT NULL,
+    room_id INTEGER NOT NULL,
     FOREIGN KEY (discipline_id) REFERENCES Disciplines(id),
     FOREIGN KEY (teacher_id) REFERENCES Teachers(id),
-    FOREIGN KEY (student_group_id) REFERENCES StudentGroups(id)
+    FOREIGN KEY (student_group_id) REFERENCES StudentGroups(id),
+    FOREIGN KEY (room_id) REFERENCES Rooms(id)
 );
