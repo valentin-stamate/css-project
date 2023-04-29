@@ -142,6 +142,29 @@ class DatabaseConnection:
             _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
             _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
             return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
+        elif table_name == 'TimeSlots':
+            formatted = []
+            for row in rows:
+                _ = list(row)
+                _[3] = self.get_all_rows_by_column("Disciplines", "id", _[3])[0][1]
+                _[4] = self.get_all_rows_by_column("Teachers", "id", _[4])[0][1]
+
+                student_group = self.get_all_rows_by_column("StudentGroups", "id", _[5])[0]
+                if int(student_group[1]) > 3:
+                    _[5] = student_group[2]
+                else:
+                    _[5] = f"{student_group[1]}{student_group[2]}"
+
+                _[9] = self.get_all_rows_by_column("Rooms", "id", _[9])[0][1]
+
+                class_type = "Curs" if _[6] else ("Laborator" if _[7] else "Seminar")
+                _[6] = class_type
+                del _[7]
+                del _[7]
+
+
+                formatted.append(_)
+            return formatted
         else:
             pass
         return rows

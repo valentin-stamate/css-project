@@ -19,7 +19,7 @@ class SchedulerApp:
         "Teachers": ["ID", "Name", "Title"],
         "Disciplines": ["ID", "Name", "Has Course", "Has Laboratory", "Has Seminary"],
         "Rooms": ["ID", "Name", "Can Host Course", "Can Host Laboratory", "Can Host Seminary"],
-        "Schedules": ["ID", "Time", "Weekday", "Discipline", "Teacher", "Students"],
+        "Schedules": ["ID", "Time", "Weekday", "Discipline", "Teacher", "StudentGroup", "ClassType", "Room"],
     }
 
     def __init__(self, master):
