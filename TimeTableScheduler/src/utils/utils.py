@@ -58,6 +58,84 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @staticmethod
+    def add_schedule(discipline, student_group, teacher, time_slot, class_type, room):
+        if len(discipline.strip()) == 0 or len(student_group.strip()) == 0 or \
+                len(teacher.strip()) == 0 or len(time_slot.strip()) == 0 or \
+                len(class_type.strip()) == 0 or len(room.strip()) == 0:
+            Utils.popup('Invalid data', "At least one input field is empty")
+
+        discipline_id = Utils.get_discipline_id_by_name(discipline)
+        student_group_id = Utils.get_student_group_id_by_name(student_group)
+        teacher_id = Utils.get_teacher_id_by_name(teacher)
+        weekday = time_slot.split(", ")[0].strip()
+        time_period = time_slot.split(", ")[1].strip()
+        room_id = Utils.get_room_id_by_name(room)
+
+        new_time_slot = TimeSlots(time=time_period, weekday=weekday, discipline=discipline_id,
+                                  teacher=teacher_id, students=student_group_id, is_course=(class_type == "Curs"),
+                                  is_laboratory=(class_type == "Laborator"), is_seminary=(class_type == "Seminar"),
+                                  room=room_id)
+        Utils.database_connection.insert_schedule(new_time_slot)
+
+    @staticmethod
+    def get_discipline_id_by_name(discipline_name):
+        disciplines = Utils.database_connection.get_all_rows_unformatted("Disciplines")
+
+        for discipline in disciplines:
+            if discipline[1] == discipline_name:
+                return discipline[0]
+
+        return 0
+
+    @staticmethod
+    def get_student_group_id_by_name(student_group_name):
+        if student_group_name.strip() == '':
+            return 1
+
+        if "M" in student_group_name:
+            matched_student_group_entities = Utils.database_connection.get_all_rows_by_column(
+                "StudentGroups", "group_name", f"\"{student_group_name}\""
+            )
+        else:
+            year = student_group_name[0]
+            student_group_name = student_group_name[1:]
+
+            matched_student_group_entities = Utils.database_connection.get_all_rows_by_columns(
+                "StudentGroups", "group_name", f"\"{student_group_name}\"", "year", year
+            )
+
+        if len(matched_student_group_entities) == 0:
+            raise Exception(f"Couldn't find group \"{student_group_name}\" in database.")
+
+        return int(matched_student_group_entities[0][0])
+
+    @staticmethod
+    def get_teacher_id_by_name(teacher_with_name_and_title):
+        if teacher_with_name_and_title.strip() == '':
+            return 1
+
+        teacher_name = teacher_with_name_and_title.split(", ")[0].strip()
+        teacher_title = teacher_with_name_and_title.split(", ")[1].strip()
+
+        matched_teacher_entities = Utils.database_connection.get_all_rows_by_columns(
+            "Teachers", "name", f"\"{teacher_name}\"", "title", f"\"{teacher_title}\""
+        )
+        if len(matched_teacher_entities) == 0:
+            raise Exception(f"Couldn't find teacher \"{teacher_with_name_and_title}\" in database.")
+
+        return int(matched_teacher_entities[0][0])
+
+    @staticmethod
+    def get_room_id_by_name(room_name):
+        rooms = Utils.database_connection.get_all_rows_unformatted("Rooms")
+
+        for room in rooms:
+            if room[1] == room_name:
+                return room[0]
+
+        return 0
+
+    @staticmethod
     def popup(popup_type, message):
         root = tk.Tk()
         root.withdraw()

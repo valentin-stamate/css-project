@@ -26,13 +26,17 @@ class Rooms:
 
 
 class TimeSlots:
-    def __init__(self, id, time, weekday, discipline, teacher, students):
+    def __init__(self, time, weekday, discipline, teacher, students, is_course, is_laboratory, is_seminary, room, id=0):
         self.id = id
         self.time = time
         self.weekday = weekday
         self.discipline = discipline
         self.teacher = teacher
         self.students = students
+        self.is_course = is_course
+        self.is_laboratory = is_laboratory
+        self.is_seminary = is_seminary
+        self.room = room
 
 
 class StudentGroups:

@@ -5,7 +5,8 @@ from tkinter.font import Font
 from src.database_connection import DatabaseConnection
 from src.enums.Semesters import Semesters
 from src.enums.Years import Years
-from src.service.filter_service import get_disciplines_for_year_and_semester
+from src.service.filter_service import get_disciplines_for_year_and_semester, get_student_groups_in_year, \
+    get_available_slots_for_teacher_and_student_group, get_available_rooms_for_time_slot_and_class_type
 from src.utils.utils import Utils
 
 
@@ -39,9 +40,9 @@ class SchedulerApp:
         self.create_tab_and_display_db_table("Rooms", "Rooms")
         self.create_tab_and_display_db_table("Schedules", "TimeSlots")
 
-        self.create_admin_tab()
+        self.create_schedule_class_tab()
 
-    def create_admin_tab(self):
+    def create_schedule_class_tab(self):
         name = "Schedule class"
 
         tab = tk.Frame(self.notebook)
@@ -58,6 +59,21 @@ class SchedulerApp:
         self.year_var.trace('w', self.update_discipline_options)
 
         self.discipline_var = tk.StringVar(inner_frame)
+        self.discipline_var.trace('w', self.update_student_group_options)
+
+        self.student_group_var = tk.StringVar(inner_frame)
+        self.student_group_var.trace('w', self.update_time_slot_options)
+
+        self.teacher_var = tk.StringVar(inner_frame)
+        self.teacher_var.trace('w', self.update_time_slot_options)
+
+        self.time_slot_var = tk.StringVar(inner_frame)
+        self.time_slot_var.trace('w', self.update_room_options)
+
+        self.class_type_var = tk.StringVar(inner_frame)
+        self.class_type_var.trace('w', self.update_room_options)
+
+        self.room_var = tk.StringVar(inner_frame)
 
         # Choosing semester
         semester_label = tk.Label(inner_frame, text="Semestrul")
@@ -83,6 +99,59 @@ class SchedulerApp:
         self.discipline_menu = tk.OptionMenu(inner_frame, self.discipline_var, '')
         self.discipline_menu.pack()
 
+        # Choosing group
+        student_group_label = tk.Label(inner_frame, text="Grupa")
+        student_group_label.pack()
+
+        self.student_group_var.set('')
+        self.student_group_menu = tk.OptionMenu(inner_frame, self.student_group_var, '')
+        self.student_group_menu.pack()
+
+        # Choosing teacher
+        teacher_group_label = tk.Label(inner_frame, text="Profesorul")
+        teacher_group_label.pack()
+
+        all_teachers = DatabaseConnection.get_instance().get_all_rows('Teachers')
+        all_teachers = [f"{teacher[1]}, {teacher[2]}" for teacher in all_teachers]
+        self.teacher_var.set(all_teachers[0])
+        self.teacher_menu = tk.OptionMenu(inner_frame, self.teacher_var, *all_teachers)
+        self.teacher_menu.pack()
+
+        # Choosing weekday
+        weekday_label = tk.Label(inner_frame, text="Ziua si ora")
+        weekday_label.pack()
+
+        self.time_slot_var.set('')
+        self.time_slot_menu = tk.OptionMenu(inner_frame, self.time_slot_var, '')
+        self.time_slot_menu.pack()
+
+        # Choosing class type
+        class_type_label = tk.Label(inner_frame, text="Tipul orei")
+        class_type_label.pack()
+
+        self.class_type_var.set('Curs')
+        self.class_type_menu = tk.OptionMenu(inner_frame, self.class_type_var, 'Curs', 'Laborator', 'Seminar')
+        self.class_type_menu.pack()
+
+        # Choosing room
+        room_label = tk.Label(inner_frame, text="Sala")
+        room_label.pack()
+
+        self.room_var.set('')
+        self.room_type_menu = tk.OptionMenu(inner_frame, self.room_var, '')
+        self.room_type_menu.pack()
+
+        # Add button
+        add_button = tk.Button(inner_frame, text="Add",
+                               command=lambda: Utils.add_schedule(self.discipline_var.get(),
+                                                                  self.student_group_var.get(),
+                                                                  self.teacher_var.get(),
+                                                                  self.time_slot_var.get(),
+                                                                  self.class_type_var.get(),
+                                                                  self.room_var.get())
+                               )
+        add_button.pack(pady=10)
+
         self.notebook.add(tab, text=f"{name}")
         self.select_tab(tab)
 
@@ -100,7 +169,57 @@ class SchedulerApp:
             self.discipline_var.set(disciplines[0])
             for discipline in disciplines:
                 menu.add_command(label=discipline, command=lambda d=discipline: self.discipline_var.set(d))
-        except:
+        except Exception as e:
+            print(f"Exception raised: {e}")
+            pass
+
+    def update_student_group_options(self, *args):
+        try:
+            year = self.year_var.get()
+
+            student_groups = get_student_groups_in_year(year)
+
+            menu = self.student_group_menu['menu']
+            menu.delete(0, 'end')
+            self.student_group_var.set(student_groups[0])
+            for student_group in student_groups:
+                menu.add_command(label=student_group, command=lambda d=student_group: self.student_group_var.set(d))
+        except Exception as e:
+            print(f"Exception raised: {e}")
+            pass
+
+    def update_time_slot_options(self, *args):
+        try:
+            teacher = self.teacher_var.get()
+            student_group = self.student_group_var.get()
+
+            time_slots = get_available_slots_for_teacher_and_student_group(teacher, student_group)
+
+            menu = self.time_slot_menu['menu']
+            menu.delete(0, 'end')
+            self.time_slot_var.set(time_slots[0])
+            for time_slot in time_slots:
+                menu.add_command(label=time_slot, command=lambda d=time_slot: self.time_slot_var.set(d))
+        except Exception as e:
+            print(f"Exception raised: {e}")
+            pass
+
+    def update_room_options(self, *args):
+        try:
+            time_slot = self.time_slot_var.get()
+            class_type = self.class_type_var.get()
+
+            rooms = get_available_rooms_for_time_slot_and_class_type(
+                time_slot, (class_type == 'Curs'), (class_type == 'Laborator'), (class_type == 'Seminar')
+            )
+
+            menu = self.room_type_menu['menu']
+            menu.delete(0, 'end')
+            self.room_var.set(rooms[0])
+            for room in rooms:
+                menu.add_command(label=room, command=lambda d=room: self.room_var.set(d))
+        except Exception as e:
+            print(f"Exception raised: {e}")
             pass
 
     def create_tab_and_display_db_table(self, name: str, table: str):
