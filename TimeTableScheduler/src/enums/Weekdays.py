@@ -12,4 +12,5 @@ class Weekdays:
 
     @staticmethod
     def get_all_values():
-        return [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY, Weekdays.FRIDAY, Weekdays.SATURDAY]
+        return [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY, Weekdays.FRIDAY,
+                Weekdays.SATURDAY]

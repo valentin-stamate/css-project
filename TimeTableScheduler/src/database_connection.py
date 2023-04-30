@@ -1,20 +1,11 @@
 import sqlite3
 
-from src.entities import Teachers, StudentGroups, TimeSlots
+from src.entities import *
+from src.enums.Configuration import Configuration
+from src.enums.Years import Years
 
 
 class DatabaseConnection:
-    converted_years_db = {
-        1: "Year 1",
-        2: "Year 2",
-        3: "Year 3",
-        4: "Master 1",
-        5: "Master 2",
-    }
-    converted_boolean_db = {
-        1: "Yes",
-        0: "No"
-    }
     __instance = None
 
     def __init__(self):
@@ -52,7 +43,8 @@ class DatabaseConnection:
         return rows
 
     def get_all_rows_by_columns_3(self, table_name, column1, value1, column2, value2, column3, value3):
-        self.cursor.execute(f"SELECT * FROM {table_name} WHERE {column1} = {value1} AND {column2} = {value2} AND {column3} = {value3}")
+        self.cursor.execute(
+            f"SELECT * FROM {table_name} WHERE {column1} = {value1} AND {column2} = {value2} AND {column3} = {value3}")
         rows = self.cursor.fetchall()
         return rows
 
@@ -64,11 +56,17 @@ class DatabaseConnection:
                 f"'{teacher.title}')"
         return self.execute_query(query)
 
-    def insert_discipline(self, discipline):
-        query = f"INSERT INTO Disciplines (name, year, semester, has_course, has_laboratory, has_seminary) VALUES " \
+    def insert_discipline(self, discipline: Disciplines):
+        if self.get_discipline(discipline):
+            return 1
+        query = f"INSERT INTO Disciplines (name, semester, for_year_1, for_year_2, for_year_3, for_year_4, for_year_5, has_course, has_laboratory, has_seminary) VALUES " \
                 f"('{discipline.name}', " \
-                f"{discipline.year}, " \
                 f"{discipline.semester}, " \
+                f"{discipline.for_year1}, " \
+                f"{discipline.for_year2}, " \
+                f"{discipline.for_year3}, " \
+                f"{discipline.for_year4}, " \
+                f"{discipline.for_year5}, " \
                 f"{discipline.has_course}, " \
                 f"{discipline.has_laboratory}, " \
                 f"{discipline.has_seminary})"
@@ -83,12 +81,15 @@ class DatabaseConnection:
         return self.execute_query(query)
 
     def insert_room(self, room):
+        if self.get_room(room):
+            print("Already exists")
+            return 1
         query = f"INSERT INTO Rooms (name, can_host_course, can_host_laboratory, can_host_seminary) VALUES " \
                 f"('{room.name}', " \
                 f"{room.can_host_course}, " \
                 f"{room.can_host_laboratory}, " \
                 f"{room.can_host_seminary})"
-        self.execute_query(query)
+        return self.execute_query(query)
 
     def insert_schedule(self, schedule: TimeSlots):
         query = f"INSERT INTO TimeSlots (time, weekday, discipline_id, teacher_id, student_group_id, is_course, is_laboratory, is_seminary, room_id) VALUES " \
@@ -110,7 +111,7 @@ class DatabaseConnection:
             self.connection.commit()
             return 0
         except Exception as e:
-            print(str(e))
+            print("Exception at insert" + str(e))
             return 2
 
     def get_teacher(self, teacher):
@@ -119,7 +120,8 @@ class DatabaseConnection:
     def get_discipline(self, discipline):
         return self.get_all_rows_by_column('Disciplines', 'name', f"'{discipline.name}'") != []
 
-    def get_room(self, room):
+    def get_room(self, room: Rooms):
+        print(self.get_all_rows_by_column('Rooms', 'name', f"'{room.name}'"))
         return self.get_all_rows_by_column('Rooms', 'name', f"'{room.name}'") != []
 
     def get_student_group(self, group):
@@ -133,15 +135,19 @@ class DatabaseConnection:
 
     def format_data(self, table_name, rows):
         if table_name == 'StudentGroups':
-            return self.replace(rows, 1, DatabaseConnection.converted_years_db)
+            return self.replace(rows, 1, Configuration.CONVERSION_YEARS_FOR_DB)
         elif table_name == 'Rooms':
-            _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
-            _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
-            return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
+            _ = self.replace(rows, 2, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            _ = self.replace(_, 3, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            return self.replace(_, 4, Configuration.CONVERSION_BOOLEAN_FOR_DB)
         elif table_name == 'Disciplines':
-            _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
-            _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
-            return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
+            _ = self.replace(rows, 8, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            _ = self.replace(_, 9, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            rows = self.replace(_, 10, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            updated_rows = []
+            for row in rows:
+                updated_rows.append((row[0], row[1], DatabaseConnection.get_year(row), row[7], row[8], row[9], row[10]))
+            return updated_rows
         elif table_name == 'TimeSlots':
             formatted = []
             for row in rows:
@@ -162,7 +168,6 @@ class DatabaseConnection:
                 del _[7]
                 del _[7]
 
-
                 formatted.append(_)
             return formatted
         else:
@@ -176,3 +181,17 @@ class DatabaseConnection:
             updated_row[index] = values[updated_row[index]]
             updated_rows.append(updated_row)
         return updated_rows
+
+    @classmethod
+    def get_year(cls, row):
+
+        if row[2] == 1:
+            return Years.BACHELOR_YEAR_1
+        if row[3] == 1:
+            return Years.BACHELOR_YEAR_2
+        if row[4] == 1:
+            return Years.BACHELOR_YEAR_3
+        if row[5] == 1:
+            return Years.MASTER_YEAR_1
+        if row[6] == 1:
+            return Years.MASTER_YEAR_2

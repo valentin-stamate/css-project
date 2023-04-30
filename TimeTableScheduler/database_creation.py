@@ -48,7 +48,7 @@ def insert_rooms(conn):
     rows = rows[1:]
     for row in rows:
         sql = "INSERT INTO Rooms(name,can_host_course,can_host_laboratory,can_host_seminary) VALUES('%s', %s, %s, %s)" % \
-                    (row[0], row[1], row[2], row[3])
+              (row[0], row[1], row[2], row[3])
         execute_insert_statement(sql, conn)
 
 
@@ -63,8 +63,8 @@ def insert_disciplines(conn):
     rows = rows[1:]
     for row in rows:
         sql = "INSERT INTO Disciplines(name,for_year_1,for_year_2,for_year_3,for_year_4,for_year_5,semester," \
-                    "has_course,has_laboratory,has_seminary) VALUES('%s', %s, %s, %s, %s, %s, %s, %s, %s, %s)" % \
-                    (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+              "has_course,has_laboratory,has_seminary) VALUES('%s', %s, %s, %s, %s, %s, %s, %s, %s, %s)" % \
+              (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
         execute_insert_statement(sql, conn)
 
 
@@ -89,7 +89,6 @@ def main():
     insert_disciplines(conn)
     insert_rooms(conn)
     insert_student_groups(conn)
-
 
     conn.close()
 

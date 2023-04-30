@@ -1,4 +1,3 @@
-from src.database_connection import DatabaseConnection
 from src.graphic_interface import SchedulerApp
 
 
