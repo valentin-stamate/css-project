@@ -55,6 +55,7 @@ class Utils:
                        has_seminary, tree):
 
         year_val = Utils.convert_year(year)
+        for_years = Utils.format_all_years(year_val)
         semester_val = Utils.convert_semester(semester)
         name_val = name_entry.get()
         has_course_val = has_course.get()
@@ -62,15 +63,42 @@ class Utils:
         has_seminary_val = has_seminary.get()
         print(f'{has_course_val}{has_laboratory_val}{has_seminary_val}')
         if year_val != '' and name_val != '' and semester_val != '' and has_seminary_val + has_course_val + has_seminary_val != 0:
-            new_discipline = StudentGroups(year=year_val, group_name=name_val)
-            status = Utils.database_connection.insert_group(new_discipline)
+            new_discipline = Disciplines(name=name_val, semester=semester_val, for_year1=for_years[0],
+                                         for_year2=for_years[1], for_year3=for_years[2], for_year4=for_years[3],
+                                         for_year5=for_years[4], has_course=has_course_val,
+                                         has_laboratory=has_laboratory_val, has_seminary=has_seminary_val)
+            status = Utils.database_connection.insert_discipline(new_discipline)
             if status == 0:
                 # year_entry.delete(0, tk.END)
                 name_entry.delete(0, tk.END)
-                Utils.popup('Success', "Student Group added")
-                Utils.load_data(tree, Utils.database_connection.get_all_rows("StudentGroups"))
+                Utils.popup('Success', "Discipline Added")
+                Utils.load_data(tree, Utils.database_connection.get_all_rows("Disciplines"))
             elif status == 1:
-                Utils.popup('Failed', "Student Group already exists")
+                Utils.popup('Failed', "Discipline already exists")
+            else:
+                Utils.popup('Error', "Internal Error")
+        else:
+            Utils.popup('Invalid data', "At least one input field is empty")
+
+    @classmethod
+    def add_room(cls, name_entry, for_course, for_laboratory, for_seminary, tree):
+        name_val = name_entry.get()
+        for_course_val = for_course.get()
+        for_laboratory_val = for_laboratory.get()
+        for_seminary_val = for_seminary.get()
+        print(f'{for_course_val}{for_laboratory_val}{for_seminary_val}')
+        if name_val != '' and for_seminary_val + for_course_val + for_seminary_val != 0:
+            new_room = Rooms(name=name_val, can_host_course=for_course_val, can_host_laboratory=for_laboratory_val,
+                             can_host_seminary=for_seminary_val)
+            status = Utils.database_connection.insert_room(new_room)
+            print(status)
+            if status == 0:
+                # year_entry.delete(0, tk.END)
+                name_entry.delete(0, tk.END)
+                Utils.popup('Success', "Room Added")
+                Utils.load_data(tree, Utils.database_connection.get_all_rows("Rooms"))
+            elif status == 1:
+                Utils.popup('Failed', "Room already exists")
             else:
                 Utils.popup('Error', "Internal Error")
         else:
@@ -174,3 +202,19 @@ class Utils:
     @classmethod
     def convert_semester(cls, semester):
         return semester[-1]
+
+    @classmethod
+    def format_all_years(cls, year):
+        if year == 1:
+            return 1, 0, 0, 0, 0
+        elif year == 2:
+            return 1, 0, 0, 0, 0
+        elif year == 3:
+            return 1, 0, 0, 0, 0
+        elif year == 4:
+            return 1, 0, 0, 0, 0
+        elif year == 5:
+            return 1, 0, 0, 0, 0
+        else:
+            print("No valid year was found to be inserted for Discipline")
+            return 0, 0, 0, 0, 0

@@ -3,23 +3,23 @@ class Configuration:
     HEIGHT = 600
     TABS = 5
     HEADINGS = {
-        "Student Groups": ["ID", "Year", "Name"],
-        "Teachers": ["ID", "Name", "Title"],
-        "Disciplines": ["ID", "Name", "Year", "Semester", "Has Course", "Has Laboratory", "Has Seminary"],
-        "Rooms": ["ID", "Name", "Can Host Course", "Can Host Laboratory", "Can Host Seminary"],
-        "Schedules": ["ID", "Time", "Weekday", "Discipline", "Teacher", "Students"],
+        "StudentGroups": ["ID", "An", "Nume"],
+        "Teachers": ["ID", "Nume", "Titlu"],
+        "Disciplines": ["ID", "Nume", "An", "Semesteru", "Curs", "Laborator", "Seminar"],
+        "Rooms": ["ID", "Nume", "Pentru Curs", "Pentru Laborator", "Pentru Seminar"],
+        "TimeSlots": ["ID", "Ora", "Zi", "Disciplina", "Profesor", "Grupa"],
     }
     COLUMN_WIDTHS = {
-        "Student Groups": {"ID": 50, "Year": 100, "Name": 100},
-        "Teachers": {"ID": 50, "Name": 350, "Title": 150},
-        "Disciplines": {"ID": 50, "Name": 500, "Year": 100, "Semester": 100, "Has Course": 100, "Has Laboratory": 100,
-                        "Has Seminary": 100},
-        "Rooms": {"ID": 50, "Name": 100, "Can Host Course": 100, "Can Host Laboratory": 100, "Can Host Seminary": 100},
-        "Schedules": {"ID": 50, "Time": 100, "Weekday": 100, "Discipline": 450, "Teacher": 350, "Students": 100},
+        "StudentGroups": {"ID": 50, "An": 100, "Nume": 100},
+        "Teachers": {"ID": 50, "Nume": 350, "Titlu": 150},
+        "Disciplines": {"ID": 50, "Nume": 500, "An": 100, "Semesteru": 100, "Curs": 100, "Laborator": 100,
+                        "Seminar": 100},
+        "Rooms": {"ID": 50, "Nume": 100, "Pentru Curs": 100, "Pentru Laborator": 100, "Pentru Seminar": 100},
+        "TimeSlots": {"ID": 50, "Ora": 100, "Zi": 100, "Disciplina": 450, "Profesor": 350, "Grupa": 100},
     }
     CONVERSION_BOOLEAN_FOR_DB = {
-        1: "Yes",
-        0: "No"
+        1: "Da",
+        0: "Nu"
     }
     CONVERSION_YEARS_FOR_UI = {
         "Anul 1": 1,
