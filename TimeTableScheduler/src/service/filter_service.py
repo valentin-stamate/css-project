@@ -1,7 +1,7 @@
 from src.database_connection import DatabaseConnection
+from src.enums.Semesters import Semesters
 from src.enums.TimePeriods import TimePeriods
 from src.enums.Weekdays import Weekdays
-from src.enums.Semesters import Semesters
 from src.enums.Years import Years
 
 

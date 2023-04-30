@@ -1,5 +1,6 @@
 import os
 from typing import List
+
 from src.service.html_service import HTMLPage, TimetablePage
 from src.service.models import ProgrammedClass
 
@@ -21,7 +22,7 @@ class TimetableGenerator:
         categorized_classes = {}
 
         for p_class in classes:
-            key = p_class.get_year() # 1
+            key = p_class.get_year()  # 1
 
             if key not in categorized_classes:
                 categorized_classes[key] = []
@@ -35,7 +36,7 @@ class TimetableGenerator:
         categorized_classes = {}
 
         for p_class in classes:
-            key = p_class.get_group_year() # 1A
+            key = p_class.get_group_year()  # 1A
 
             if key not in categorized_classes:
                 categorized_classes[key] = []
@@ -170,7 +171,8 @@ class TimetableGenerator:
             html_page.add(f'<li><a href="pages/{html_name}">Anul {year_key}</a>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
-            html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data, f'./html/pages/{html_name}')
+            html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data,
+                                       f'./html/pages/{html_name}')
             html_table.generate_html()
 
             # Generates the group type timetable
@@ -182,7 +184,8 @@ class TimetableGenerator:
                 html_page.add(f'<li><a href="pages/{html_name}">Grupa {group_type_key}</a>')
 
                 data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
-                html_table = TimetablePage(f'Orar {group_type_key}', self.year_group_headers, data, f'./html/pages/{html_name}')
+                html_table = TimetablePage(f'Orar {group_type_key}', self.year_group_headers, data,
+                                           f'./html/pages/{html_name}')
                 html_table.generate_html()
 
                 # Generates the group timetable
@@ -196,7 +199,8 @@ class TimetableGenerator:
 
                     data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_timetable)
 
-                    html_table = TimetablePage(f'Orar {group_key}', self.group_headers, data, f'./html/pages/{html_name}')
+                    html_table = TimetablePage(f'Orar {group_key}', self.group_headers, data,
+                                               f'./html/pages/{html_name}')
                     html_table.generate_html()
 
                 html_page.add('</ul></li>')

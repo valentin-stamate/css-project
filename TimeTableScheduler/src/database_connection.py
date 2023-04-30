@@ -1,20 +1,11 @@
 import sqlite3
 
 from src.entities import Teachers, StudentGroups, TimeSlots
+from src.enums.Configuration import Configuration
+from src.enums.Years import Years
 
 
 class DatabaseConnection:
-    converted_years_db = {
-        1: "Year 1",
-        2: "Year 2",
-        3: "Year 3",
-        4: "Master 1",
-        5: "Master 2",
-    }
-    converted_boolean_db = {
-        1: "Yes",
-        0: "No"
-    }
     __instance = None
 
     def __init__(self):
@@ -52,7 +43,8 @@ class DatabaseConnection:
         return rows
 
     def get_all_rows_by_columns_3(self, table_name, column1, value1, column2, value2, column3, value3):
-        self.cursor.execute(f"SELECT * FROM {table_name} WHERE {column1} = {value1} AND {column2} = {value2} AND {column3} = {value3}")
+        self.cursor.execute(
+            f"SELECT * FROM {table_name} WHERE {column1} = {value1} AND {column2} = {value2} AND {column3} = {value3}")
         rows = self.cursor.fetchall()
         return rows
 
@@ -133,12 +125,20 @@ class DatabaseConnection:
 
     def format_data(self, table_name, rows):
         if table_name == 'StudentGroups':
-            return self.replace(rows, 1, DatabaseConnection.converted_years_db)
+            return self.replace(rows, 1, Configuration.CONVERSION_YEARS_FOR_DB)
         elif table_name == 'Rooms':
-            _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
-            _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
-            return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
+            _ = self.replace(rows, 2, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            _ = self.replace(_, 3, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            return self.replace(_, 4, Configuration.CONVERSION_BOOLEAN_FOR_DB)
         elif table_name == 'Disciplines':
+            _ = self.replace(rows, 8, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            _ = self.replace(_, 9, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            rows = self.replace(_, 10, Configuration.CONVERSION_BOOLEAN_FOR_DB)
+            updated_rows = []
+            for row in rows:
+                updated_rows.append((row[0], row[1], DatabaseConnection.get_year(row), row[7], row[8], row[9], row[10]))
+            return updated_rows
+
             _ = self.replace(rows, 2, DatabaseConnection.converted_boolean_db)
             _ = self.replace(_, 3, DatabaseConnection.converted_boolean_db)
             return self.replace(_, 4, DatabaseConnection.converted_boolean_db)
@@ -162,7 +162,6 @@ class DatabaseConnection:
                 del _[7]
                 del _[7]
 
-
                 formatted.append(_)
             return formatted
         else:
@@ -176,3 +175,17 @@ class DatabaseConnection:
             updated_row[index] = values[updated_row[index]]
             updated_rows.append(updated_row)
         return updated_rows
+
+    @classmethod
+    def get_year(cls, row):
+
+        if row[2] == 1:
+            return Years.BACHELOR_YEAR_1
+        if row[3] == 1:
+            return Years.BACHELOR_YEAR_2
+        if row[4] == 1:
+            return Years.BACHELOR_YEAR_3
+        if row[5] == 1:
+            return Years.MASTER_YEAR_1
+        if row[6] == 1:
+            return Years.MASTER_YEAR_2

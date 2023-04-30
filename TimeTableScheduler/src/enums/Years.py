@@ -11,7 +11,7 @@ class Years:
 
     @staticmethod
     def get_all_values() -> list:
-        return [Years.BACHELOR_YEAR_1, Years.BACHELOR_YEAR_2 , Years.BACHELOR_YEAR_3,
+        return [Years.BACHELOR_YEAR_1, Years.BACHELOR_YEAR_2, Years.BACHELOR_YEAR_3,
                 Years.MASTER_YEAR_1, Years.MASTER_YEAR_2]
 
     @staticmethod

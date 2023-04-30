@@ -3,17 +3,10 @@ from tkinter import messagebox
 
 from src.database_connection import DatabaseConnection
 from src.entities import *
+from src.enums.Configuration import Configuration
 
 
 class Utils:
-    converted_years_ui = {
-        "Year 1": 1,
-        "Year 2": 2,
-        "Year 3": 3,
-        "Master 1": 4,
-        "Master 2": 5
-    }
-
     database_connection = DatabaseConnection.get_instance()
 
     @staticmethod
@@ -45,6 +38,32 @@ class Utils:
         if year_val != '' and name_val != '':
             new_group = StudentGroups(year=year_val, group_name=name_val)
             status = Utils.database_connection.insert_group(new_group)
+            if status == 0:
+                # year_entry.delete(0, tk.END)
+                name_entry.delete(0, tk.END)
+                Utils.popup('Success', "Student Group added")
+                Utils.load_data(tree, Utils.database_connection.get_all_rows("StudentGroups"))
+            elif status == 1:
+                Utils.popup('Failed', "Student Group already exists")
+            else:
+                Utils.popup('Error', "Internal Error")
+        else:
+            Utils.popup('Invalid data', "At least one input field is empty")
+
+    @classmethod
+    def add_discipline(cls, name_entry, year, semester, has_course, has_laboratory,
+                       has_seminary, tree):
+
+        year_val = Utils.convert_year(year)
+        semester_val = Utils.convert_semester(semester)
+        name_val = name_entry.get()
+        has_course_val = has_course.get()
+        has_laboratory_val = has_laboratory.get()
+        has_seminary_val = has_seminary.get()
+        print(f'{has_course_val}{has_laboratory_val}{has_seminary_val}')
+        if year_val != '' and name_val != '' and semester_val != '' and has_seminary_val + has_course_val + has_seminary_val != 0:
+            new_discipline = StudentGroups(year=year_val, group_name=name_val)
+            status = Utils.database_connection.insert_group(new_discipline)
             if status == 0:
                 # year_entry.delete(0, tk.END)
                 name_entry.delete(0, tk.END)
@@ -149,6 +168,9 @@ class Utils:
 
     @classmethod
     def convert_year(cls, year):
-        return Utils.converted_years_ui[year]
+        print(year)
+        return Configuration.CONVERSION_YEARS_FOR_UI[year]
 
-
+    @classmethod
+    def convert_semester(cls, semester):
+        return semester[-1]

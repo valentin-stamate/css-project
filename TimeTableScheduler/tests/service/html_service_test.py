@@ -1,8 +1,8 @@
 import unittest
 
-from src.service.html_service import TimetablePage
+from tests.mock import TIMETABLE_MOCK
+
 from src.service.timetable_service import TimetableGenerator
-from tests.mock import MOCK_STUDENT_TIMETABLE, TIMETABLE_MOCK
 
 
 class TestTimetablePage(unittest.TestCase):

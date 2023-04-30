@@ -6,10 +6,15 @@ class Teachers:
 
 
 class Disciplines:
-    def __init__(self, id, name, year, semester, has_course=True, has_laboratory=False, has_seminary=False):
+    def __init__(self, name, semester, for_year1=False, for_year2=False, for_year3=False, for_year4=False,
+                 for_year5=False, has_course=True, has_laboratory=False, has_seminary=False, id='0'):
         self.id = id
         self.name = name
-        self.year = year
+        self.for_year1 = for_year1
+        self.for_year2 = for_year2
+        self.for_year3 = for_year3
+        self.for_year4 = for_year4
+        self.for_year5 = for_year5
         self.semester = semester
         self.has_course = has_course
         self.has_laboratory = has_laboratory
@@ -17,7 +22,7 @@ class Disciplines:
 
 
 class Rooms:
-    def __init__(self, id, name, can_host_course, can_host_laboratory, can_host_seminary):
+    def __init__(self, name, can_host_course=False, can_host_laboratory=False, can_host_seminary=False, id='0'):
         self.id = id
         self.name = name
         self.can_host_course = can_host_course

@@ -3,6 +3,8 @@ from tkinter import ttk
 from tkinter.font import Font
 
 from src.database_connection import DatabaseConnection
+from src.enums.ClassTypes import ClassTypes
+from src.enums.Configuration import Configuration
 from src.enums.Semesters import Semesters
 from src.enums.Years import Years
 from src.service.filter_service import get_disciplines_for_year_and_semester, get_student_groups_in_year, \
@@ -11,22 +13,13 @@ from src.utils.utils import Utils
 
 
 class SchedulerApp:
-    WIDTH = 1200
-    HEIGHT = 600
-    TABS = 5
-    HEADINGS = {
-        "Student Groups": ["ID", "Year", "Name"],
-        "Teachers": ["ID", "Name", "Title"],
-        "Disciplines": ["ID", "Name", "Has Course", "Has Laboratory", "Has Seminary"],
-        "Rooms": ["ID", "Name", "Can Host Course", "Can Host Laboratory", "Can Host Seminary"],
-        "Schedules": ["ID", "Time", "Weekday", "Discipline", "Teacher", "StudentGroup", "ClassType", "Room"],
-    }
 
     def __init__(self, master):
+        self.selected_semester = None
         self.selected_year = None
         self.master = master
         self.master.title("Scheduler App")
-        self.notebook = ttk.Notebook(self.master, width=SchedulerApp.WIDTH, height=SchedulerApp.HEIGHT)
+        self.notebook = ttk.Notebook(self.master, width=Configuration.WIDTH, height=Configuration.HEIGHT)
         self.notebook.pack(fill="both", expand=True)
         self.current_tab = None
         style = ttk.Style()
@@ -235,10 +228,13 @@ class SchedulerApp:
         number_of_columns = len(rows[0]) if len(rows) > 0 else 1
 
         tree = ttk.Treeview(data_frame, columns=[f"c{i + 1}" for i in range(0, number_of_columns)], show='headings',
-                            height=(SchedulerApp.HEIGHT - 50))
-        tree['columns'] = tuple(SchedulerApp.HEADINGS[name])
-        for index, heading in enumerate(SchedulerApp.HEADINGS[name]):
+                            height=(Configuration.HEIGHT - 50))
+        tree['columns'] = tuple(Configuration.HEADINGS[name])
+        for index, heading in enumerate(Configuration.HEADINGS[name]):
             tree.heading(index, text=heading)
+
+        for key in Configuration.COLUMN_WIDTHS[name].keys():
+            tree.column(key, width=Configuration.COLUMN_WIDTHS[name][key])
 
         Utils.load_data(tree, rows)
 
@@ -264,15 +260,14 @@ class SchedulerApp:
         if name == "Student Groups":
 
             add_label = tk.Label(frame, text="Add student group:", font=add_font)
-            values = ["Year 1", "Year 2", "Year 3", "Master 1", "Master 2"]
+            values = ["Anul 1", "Anul 2", "Anul 3", "Master Anul 1", "Master Anul 2"]
             selected_value = tk.StringVar()
-            dropdown = ttk.Combobox(frame, textvariable=selected_value, values=values)
-            dropdown.bind("<<ComboboxSelected>>", self.on_select)
+            year_dropdown = ttk.Combobox(frame, textvariable=selected_value, values=values)
+            year_dropdown.bind("<<ComboboxSelected>>", self.on_select_year)
             year_label = tk.Label(frame, text="Year:")
-            year_entry = tk.Entry(frame)
             add_label.pack(pady=5)
             year_label.pack(pady=2)
-            dropdown.pack(pady=2)
+            year_dropdown.pack(pady=2)
 
             name_label = tk.Label(frame, text="Name:")
             name_entry = tk.Entry(frame)
@@ -298,7 +293,47 @@ class SchedulerApp:
             add_button = tk.Button(frame, text="Add", command=lambda: Utils.add_teacher(name_entry, title_entry, tree))
             add_button.pack(pady=10)
         elif name == "Disciplines":
-            pass
+            add_label = tk.Label(frame, text="Add Discipline:", font=add_font)
+            semester_values = Semesters.get_all_values()
+            year_values = Years.get_all_values()
+            selected_value = tk.StringVar(value=Years.get_default_value())
+            year_dropdown = ttk.Combobox(frame, textvariable=selected_value, values=year_values)
+            year_dropdown.bind("<<ComboboxSelected>>", self.on_select_year)
+            # selected_value.set(Years.get_default_value())
+            year_label = tk.Label(frame, text="Year:")
+            add_label.pack(pady=5)
+            year_label.pack(pady=2)
+            year_dropdown.pack(pady=2)
+            selected_value = tk.StringVar()
+            semester_dropdown = ttk.Combobox(frame, textvariable=selected_value, values=semester_values)
+            semester_dropdown.bind("<<ComboboxSelected>>", self.on_select_semester)
+            selected_value.set(Semesters.get_default_value())
+            year_label = tk.Label(frame, text="Semester:")
+            add_label.pack(pady=5)
+            year_label.pack(pady=2)
+            semester_dropdown.pack(pady=2)
+
+            name_label = tk.Label(frame, text="Name:")
+            name_entry = tk.Entry(frame)
+            name_label.pack(pady=2)
+            name_entry.pack(pady=2)
+            has_course_var = tk.IntVar()
+            has_laboratory_var = tk.IntVar()
+            has_seminary_var = tk.IntVar()
+            course = tk.Checkbutton(frame, text=f'   {ClassTypes.COURSE}  ', variable=has_course_var)
+            laboratory = tk.Checkbutton(frame, text=f'{ClassTypes.LABORATORY}', variable=has_laboratory_var)
+            seminary = tk.Checkbutton(frame, text=f' {ClassTypes.SEMINARY} ', variable=has_seminary_var)
+
+            # Pack the checkbox into the window
+            course.pack()
+            laboratory.pack()
+            seminary.pack()
+
+            add_button = tk.Button(frame, text="Add",
+                                   command=lambda: Utils.add_discipline(name_entry, self.selected_year,
+                                                                        self.selected_semester, has_course_var,
+                                                                        has_laboratory_var, has_seminary_var, tree))
+            add_button.pack(pady=10)
         elif name == "Rooms":
             pass
         elif name == "Schedules":
@@ -306,7 +341,12 @@ class SchedulerApp:
         else:
             print('invalid option')
 
-    def on_select(self, event):
+    def on_select_year(self, event):
         selected_value = event.widget.get()
-        print(f"Selected value: {selected_value}")
+        print(f"Selected year value: {selected_value}")
         self.selected_year = selected_value
+
+    def on_select_semester(self, event):
+        selected_value = event.widget.get()
+        print(f"Selected semester value: {selected_value}")
+        self.selected_semester = selected_value
