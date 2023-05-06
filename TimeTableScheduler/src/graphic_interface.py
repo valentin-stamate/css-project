@@ -1,4 +1,6 @@
+import subprocess
 import tkinter as tk
+from threading import Thread
 from tkinter import ttk
 from tkinter.font import Font
 
@@ -9,7 +11,6 @@ from src.enums.Semesters import Semesters
 from src.enums.Years import Years
 from src.service.filter_service import get_disciplines_for_year_and_semester, get_student_groups_in_year, \
     get_available_slots_for_teacher_and_student_group, get_available_rooms_for_time_slot_and_class_type
-from src.service.models import ProgrammedClass
 from src.service.timetable_service import TimetableGenerator
 from src.utils.utils import Utils
 
@@ -28,7 +29,6 @@ class SchedulerApp:
         style.configure("myStyle.TNotebook", tabposition="n", compund='left', font=("TkDefaultFont", 40),
                         padding=(20, 5))
         self.notebook.configure(style="myStyle.TNotebook")
-
         # create tabs
         self.create_tab_and_display_db_table("Grupe", "StudentGroups")
         self.create_tab_and_display_db_table("Profesori", "Teachers")
@@ -145,12 +145,13 @@ class SchedulerApp:
                                                                   self.teacher_var.get(),
                                                                   self.time_slot_var.get(),
                                                                   self.class_type_var.get(),
-                                                                  self.room_var.get())
+                                                                  self.room_var.get(),
+                                                                  self.timeslots_tree
+                                                                  )
                                )
         add_button.pack(pady=10)
 
         self.notebook.add(tab, text=f"{name}")
-        self.select_tab(tab)
 
         self.update_discipline_options()
 
@@ -221,6 +222,7 @@ class SchedulerApp:
             pass
 
     def create_tab_and_display_db_table(self, tab_name: str, table: str):
+
         tab = tk.Frame(self.notebook)
         tab.pack(side="top", pady=10)
 
@@ -232,30 +234,30 @@ class SchedulerApp:
         rows = DatabaseConnection.get_instance().get_all_rows(table)
         number_of_columns = len(rows[0]) if len(rows) > 0 else 1
 
-        tree = ttk.Treeview(data_frame, columns=[f"c{i + 1}" for i in range(0, number_of_columns)], show='headings',
-                            height=(Configuration.HEIGHT - 50))
-        tree['columns'] = tuple(Configuration.HEADINGS[table])
+        self.tree = ttk.Treeview(data_frame, columns=[f"c{i + 1}" for i in range(0, number_of_columns)],
+                                 show='headings',
+                                 height=(Configuration.HEIGHT - 50))
+        self.tree['columns'] = tuple(Configuration.HEADINGS[table])
         for index, heading in enumerate(Configuration.HEADINGS[table]):
-            tree.heading(index, text=heading)
+            self.tree.heading(index, text=heading)
 
         for key in Configuration.COLUMN_WIDTHS[table].keys():
-            tree.column(key, width=Configuration.COLUMN_WIDTHS[table][key], anchor='center')
+            self.tree.column(key, width=Configuration.COLUMN_WIDTHS[table][key], anchor='center')
 
-        Utils.load_data(tree, table)
+        Utils.load_data(self.tree, table)
 
-        self.create_insert_form(data_frame, table, tree)
+        self.create_insert_form(data_frame, table, self.tree)
         self.notebook.add(tab, text=f"{tab_name}")
-        self.select_tab(tab)
-        delete_button = tk.Button(tab, text="Delete",
-                                  command=lambda tree_view=tree: Utils.delete_entry(tree_view, table))
+        if table == 'TimeSlots':
+            print("saved tree for time slots")
+            self.timeslots_tree = self.tree
+        delete_button = tk.Button(tab, text="Sterge Rand",
+                                  command=lambda tree_view=self.tree: Utils.delete_entry(tree_view,
+                                                                                         table,
+                                                                                         self.timeslots_tree))
         delete_button.pack(side='bottom', pady=10)
         data_frame.pack()
-        tree.pack()
-
-    def select_tab(self, tab):
-        # select the given tab and set it as the current tab
-        self.notebook.select(tab)
-        self.current_tab = tab
+        self.tree.pack()
 
     @staticmethod
     def start():
@@ -264,7 +266,7 @@ class SchedulerApp:
         root.mainloop()
 
     def create_insert_form(self, frame, name, tree):
-        print(f"inser from {name}")
+        print(f"insert form {name}")
         add_font = Font(size=13)
         if name == "StudentGroups":
 
@@ -284,7 +286,8 @@ class SchedulerApp:
             name_entry.pack(pady=2)
 
             add_button = tk.Button(frame, text="Adauga",
-                                   command=lambda: Utils.add_student_group(self.selected_year, name_entry, tree, name))
+                                   command=lambda: Utils.add_student_group(self.selected_year, name_entry, tree, name,
+                                                                           self.timeslots_tree))
             add_button.pack(pady=10)
             load_file_button = tk.Button(frame, text="Incarca un fisier",
                                          command=lambda: Utils.load_student_group_file(tree, name))
@@ -303,7 +306,8 @@ class SchedulerApp:
             title_entry.pack(pady=2)
 
             add_button = tk.Button(frame, text="Adauga",
-                                   command=lambda: Utils.add_teacher(name_entry, title_entry, tree, name))
+                                   command=lambda: Utils.add_teacher(name_entry, title_entry, tree, name,
+                                                                     self.timeslots_tree))
             add_button.pack(pady=10)
             load_file_button = tk.Button(frame, text="Incarca un fisier",
                                          command=lambda: Utils.load_teacher_file(tree, name))
@@ -349,7 +353,7 @@ class SchedulerApp:
                                    command=lambda: Utils.add_discipline(name_entry, self.selected_year,
                                                                         self.selected_semester, for_course_var,
                                                                         for_laboratory_var, for_seminary_var, tree,
-                                                                        name))
+                                                                        name, self.timeslots_tree))
             add_button.pack(pady=10)
 
             load_file_button = tk.Button(frame, text="Incarca un fisier",
@@ -376,13 +380,15 @@ class SchedulerApp:
 
             add_button = tk.Button(frame, text="Adauga",
                                    command=lambda: Utils.add_room(name_entry, for_course_var, for_laboratory_var,
-                                                                  for_seminary_var, tree, name))
+                                                                  for_seminary_var, tree, name, self.timeslots_tree))
             add_button.pack(pady=10)
             load_file_button = tk.Button(frame, text="Incarca un fisier",
                                          command=lambda: Utils.load_room_file(tree, name))
             load_file_button.pack(pady=10)
-        elif name == "Schedules":
-            pass
+        elif name == "TimeSlots":
+            export_button = tk.Button(frame, text="Exporta Orar",
+                                      command=self.on_generate_html_timetables)
+            export_button.pack(pady=10)
         else:
             print('invalid option')
 
@@ -396,10 +402,18 @@ class SchedulerApp:
         print(f"Selected semester value: {selected_value}")
         self.selected_semester = selected_value
 
-    def on_generate_html_timetables(self, event):
-        conn = DatabaseConnection()
+    def on_generate_html_timetables(self):
+        conn = DatabaseConnection.get_instance()
         rows = conn.get_all_planned_disciplines()
         planned_disciplines = Utils.planned_disciplines_rows_to_objects(rows)
 
         timetable_service = TimetableGenerator(planned_disciplines)
         timetable_service.generate_all()
+        output_thread = Thread(target=self.open_output, daemon=True)
+        output_thread.start()
+
+    def open_output(self):
+        subprocess.Popen('run-web-server.bat')
+        print("Started server")
+        subprocess.Popen('open-index.bat')
+        print("Opened index.html")

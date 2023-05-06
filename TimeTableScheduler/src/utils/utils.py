@@ -13,7 +13,7 @@ class Utils:
     database_connection = DatabaseConnection.get_instance()
 
     @staticmethod
-    def add_teacher(name_entry, title_entry, tree, table):
+    def add_teacher(name_entry, title_entry, tree, table,timeslots_tree):
         name_val = name_entry.get()
         title_val = title_entry.get()
         if name_val != '' and title_val != '':
@@ -26,6 +26,9 @@ class Utils:
                 title_entry.delete(0, tk.END)
                 Utils.popup('Success', "Teacher added")
                 Utils.load_data(tree, table)
+                if timeslots_tree is not None:
+                    print("reloading Schedule tree")
+                    Utils.load_data(timeslots_tree, 'TimeSlots')
             elif status == 1:
                 Utils.popup('Failed', "Teacher already exists")
             else:
@@ -34,7 +37,7 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @staticmethod
-    def add_student_group(year, name_entry, tree, table):
+    def add_student_group(year, name_entry, tree, table,timeslots_tree):
         print(f"Year val {year}")
         year_val = Utils.convert_year(year)
         name_val = name_entry.get()
@@ -46,6 +49,9 @@ class Utils:
                 name_entry.delete(0, tk.END)
                 Utils.popup('Success', "Student Group added")
                 Utils.load_data(tree, table)
+                if timeslots_tree is not None:
+                    print("reloading Schedule tree")
+                    Utils.load_data(timeslots_tree, 'TimeSlots')
             elif status == 1:
                 Utils.popup('Failed', "Student Group already exists")
             else:
@@ -55,7 +61,7 @@ class Utils:
 
     @classmethod
     def add_discipline(cls, name_entry, year, semester, has_course, has_laboratory,
-                       has_seminary, tree, table):
+                       has_seminary, tree, table,timeslots_tree):
 
         year_val = Utils.convert_year(year)
         for_years = Utils.format_all_years(year_val)
@@ -76,6 +82,9 @@ class Utils:
                 name_entry.delete(0, tk.END)
                 Utils.popup('Success', "Discipline Added")
                 Utils.load_data(tree, table)
+                if timeslots_tree is not None:
+                    print("reloading Schedule tree")
+                    Utils.load_data(timeslots_tree, 'TimeSlots')
             elif status == 1:
                 Utils.popup('Failed', "Discipline already exists")
             else:
@@ -84,7 +93,7 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @classmethod
-    def add_room(cls, name_entry, for_course, for_laboratory, for_seminary, tree, table):
+    def add_room(cls, name_entry, for_course, for_laboratory, for_seminary, tree, table,timeslots_tree):
         name_val = name_entry.get()
         for_course_val = for_course.get()
         for_laboratory_val = for_laboratory.get()
@@ -100,6 +109,9 @@ class Utils:
                 name_entry.delete(0, tk.END)
                 Utils.popup('Success', "Room Added")
                 Utils.load_data(tree, table)
+                if timeslots_tree is not None:
+                    print("reloading Schedule tree")
+                    Utils.load_data(timeslots_tree, 'TimeSlots')
             elif status == 1:
                 Utils.popup('Failed', "Room already exists")
             else:
@@ -108,7 +120,7 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @staticmethod
-    def add_schedule(discipline, student_group, teacher, time_slot, class_type, room):
+    def add_schedule(discipline, student_group, teacher, time_slot, class_type, room,timeslots_tree):
         if len(discipline.strip()) == 0 or len(student_group.strip()) == 0 or \
                 len(teacher.strip()) == 0 or len(time_slot.strip()) == 0 or \
                 len(class_type.strip()) == 0 or len(room.strip()) == 0:
@@ -120,13 +132,15 @@ class Utils:
         weekday = time_slot.split(", ")[0].strip()
         time_period = time_slot.split(", ")[1].strip()
         room_id = Utils.get_room_id_by_name(room)
-
         for student_group_id in student_group_ids:
             new_time_slot = TimeSlots(time=time_period, weekday=weekday, discipline=discipline_id,
                                       teacher=teacher_id, students=student_group_id, is_course=(class_type == "Curs"),
                                       is_laboratory=(class_type == "Laborator"), is_seminary=(class_type == "Seminar"),
                                       room=room_id)
             Utils.database_connection.insert_schedule(new_time_slot)
+        if timeslots_tree is not None:
+            print("reloading Schedule tree")
+            Utils.load_data(timeslots_tree, 'TimeSlots')
 
     @staticmethod
     def get_discipline_id_by_name(discipline_name):
@@ -202,6 +216,7 @@ class Utils:
 
     @classmethod
     def load_data(cls, tree, table):
+        print(f"Loading data for {table}")
         tree.delete(*tree.get_children())
         rows = Utils.database_connection.get_instance().get_all_rows(table)
         for row in rows:
@@ -233,7 +248,7 @@ class Utils:
             return 0, 0, 0, 0, 0
 
     @classmethod
-    def delete_entry(cls, tree, table):
+    def delete_entry(cls, tree, table, timeslots_tree=None):
         selected_items = tree.selection()
         if len(selected_items) == 0:
             Utils.popup("Error", "At least one row must be selected for deletion")
@@ -244,6 +259,9 @@ class Utils:
                 print(f"Table {table}, id = {entry_id}")
                 Utils.database_connection.delete_entry(table=table, id=entry_id)
             Utils.load_data(tree, table)
+            if timeslots_tree is not None:
+                print("reloading Schedule tree")
+                Utils.load_data(timeslots_tree, 'TimeSlots')
 
     @classmethod
     def load_student_group_file(cls, tree, name):
@@ -370,7 +388,8 @@ class Utils:
                 if dt == 1:
                     type_ = disciple_types[i]
 
-            discipline = ProgrammedClass(discipline[2], from_, to, discipline[5], int(discipline[10]), discipline[3], type_, [discipline[4]], discipline[9])
+            discipline = ProgrammedClass(discipline[2], from_, to, discipline[5], int(discipline[10]), discipline[3],
+                                         type_, [discipline[4]], discipline[9])
             planned_disciplines.append(discipline)
 
         return planned_disciplines
