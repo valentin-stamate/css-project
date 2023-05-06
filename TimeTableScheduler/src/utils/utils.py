@@ -4,6 +4,7 @@ from tkinter import messagebox
 from src.database_connection import DatabaseConnection
 from src.entities import *
 from src.enums.Configuration import Configuration
+from src.enums.Years import Years
 
 
 class Utils:
@@ -112,17 +113,18 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
         discipline_id = Utils.get_discipline_id_by_name(discipline)
-        student_group_id = Utils.get_student_group_id_by_name(student_group)
+        student_group_ids = Utils.get_student_group_ids_by_name(student_group)
         teacher_id = Utils.get_teacher_id_by_name(teacher)
         weekday = time_slot.split(", ")[0].strip()
         time_period = time_slot.split(", ")[1].strip()
         room_id = Utils.get_room_id_by_name(room)
 
-        new_time_slot = TimeSlots(time=time_period, weekday=weekday, discipline=discipline_id,
-                                  teacher=teacher_id, students=student_group_id, is_course=(class_type == "Curs"),
-                                  is_laboratory=(class_type == "Laborator"), is_seminary=(class_type == "Seminar"),
-                                  room=room_id)
-        Utils.database_connection.insert_schedule(new_time_slot)
+        for student_group_id in student_group_ids:
+            new_time_slot = TimeSlots(time=time_period, weekday=weekday, discipline=discipline_id,
+                                      teacher=teacher_id, students=student_group_id, is_course=(class_type == "Curs"),
+                                      is_laboratory=(class_type == "Laborator"), is_seminary=(class_type == "Seminar"),
+                                      room=room_id)
+            Utils.database_connection.insert_schedule(new_time_slot)
 
     @staticmethod
     def get_discipline_id_by_name(discipline_name):
@@ -135,9 +137,17 @@ class Utils:
         return 0
 
     @staticmethod
-    def get_student_group_id_by_name(student_group_name):
+    def get_student_group_ids_by_name(student_group_name) -> [int]:
         if student_group_name.strip() == '':
-            return 1
+            return []
+
+        if Years.is_any_year(student_group_name):
+            year_index = Years.get_year_index(student_group_name)
+            matched_student_group_entities = DatabaseConnection.get_instance().get_all_rows_by_column(
+                "StudentGroups", "year", f"{year_index}"
+            )
+
+            return [int(entity[0]) for entity in matched_student_group_entities]
 
         if "M" in student_group_name:
             matched_student_group_entities = Utils.database_connection.get_all_rows_by_column(
@@ -154,7 +164,7 @@ class Utils:
         if len(matched_student_group_entities) == 0:
             raise Exception(f"Couldn't find group \"{student_group_name}\" in database.")
 
-        return int(matched_student_group_entities[0][0])
+        return [int(matched_student_group_entities[0][0])]
 
     @staticmethod
     def get_teacher_id_by_name(teacher_with_name_and_title):
