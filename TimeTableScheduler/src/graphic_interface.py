@@ -66,6 +66,7 @@ class SchedulerApp:
 
         self.class_type_var = tk.StringVar(inner_frame)
         self.class_type_var.trace('w', self.update_room_options)
+        self.class_type_var.trace('w', self.update_student_group_options)
 
         self.room_var = tk.StringVar(inner_frame)
 
@@ -170,8 +171,9 @@ class SchedulerApp:
     def update_student_group_options(self, *args):
         try:
             year = self.year_var.get()
+            class_type = self.class_type_var.get()
 
-            student_groups = get_student_groups_in_year(year)
+            student_groups = get_student_groups_in_year(year, class_type)
 
             menu = self.student_group_menu['menu']
             menu.delete(0, 'end')
