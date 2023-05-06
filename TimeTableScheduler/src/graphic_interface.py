@@ -9,6 +9,8 @@ from src.enums.Semesters import Semesters
 from src.enums.Years import Years
 from src.service.filter_service import get_disciplines_for_year_and_semester, get_student_groups_in_year, \
     get_available_slots_for_teacher_and_student_group, get_available_rooms_for_time_slot_and_class_type
+from src.service.models import ProgrammedClass
+from src.service.timetable_service import TimetableGenerator
 from src.utils.utils import Utils
 
 
@@ -393,3 +395,11 @@ class SchedulerApp:
         selected_value = event.widget.get()
         print(f"Selected semester value: {selected_value}")
         self.selected_semester = selected_value
+
+    def on_generate_html_timetables(self, event):
+        conn = DatabaseConnection()
+        rows = conn.get_all_planned_disciplines()
+        planned_disciplines = Utils.planned_disciplines_rows_to_objects(rows)
+
+        timetable_service = TimetableGenerator(planned_disciplines)
+        timetable_service.generate_all()

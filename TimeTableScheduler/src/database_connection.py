@@ -28,6 +28,10 @@ class DatabaseConnection:
     def get_all_rows(self, table_name):
         return self.format_data(table_name, self.get_all_rows_unformatted(table_name))
 
+    def get_all_planned_disciplines(self):
+        self.cursor.execute("SELECT TS.id, TS.time, TS.weekday, D.name, T.name, SG.group_name, TS.is_course, TS.is_laboratory, TS.is_seminary, R.name, SG.year FROM TimeSlots TS JOIN Disciplines D on TS.discipline_id = D.id JOIN Teachers T on TS.teacher_id = T.id JOIN StudentGroups SG on TS.student_group_id = SG.id JOIN Rooms R on TS.room_id = R.id")
+        return self.cursor.fetchall()
+
     def get_all_rows_unformatted(self, table_name):
         self.cursor.execute(f"SELECT * FROM {table_name}")
         return self.cursor.fetchall()
