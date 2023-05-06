@@ -104,6 +104,10 @@ class DatabaseConnection:
                 f"{schedule.room})"
         self.execute_query(query)
 
+    def delete_entry(self, table, id):
+        query = f"DELETE FROM {table} where id = {id}"
+        self.execute_query(query)
+
     def execute_query(self, query):
         try:
             print(f"Executed query: {query}")
@@ -129,7 +133,7 @@ class DatabaseConnection:
         print(rows)
         for row in rows:
             print(row)
-            if row[1] == group.year:
+            if str(row[1]) == str(group.year):
                 return True
         return False
 
