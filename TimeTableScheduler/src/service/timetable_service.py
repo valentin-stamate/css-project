@@ -169,8 +169,12 @@ class TimetableGenerator:
         classes_list.sort()
         for year_key in classes_list:
             classes = classes_categorized_by_year[year_key]
+            year_key = int(year_key)
             html_name = f'classes_{year_key}.html'
-            html_page.add(f'<li><a href="pages/{html_name}">Anul {year_key}</a>')
+
+            year_title = ('Master ' if year_key > 3 else '') + 'Anul ' + str(year_key if year_key <= 3 else year_key - 3)
+
+            html_page.add(f'<li><a href="pages/{html_name}">{year_title}</a>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
             html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data, f'./html/pages/{html_name}')
@@ -191,6 +195,10 @@ class TimetableGenerator:
 
                 # Generates the group timetable
                 classes_by_group = self.categorize_by_group(classes)
+
+                if len(classes_by_group) == 1:
+                    continue
+
                 html_page.add('<ul>')
                 for group_key in classes_by_group.keys():
                     classes = classes_by_group[group_key]

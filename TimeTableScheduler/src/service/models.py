@@ -1,6 +1,8 @@
 class ProgrammedClass:
 
     def __init__(self, day, from_, to, group_class, year, class_name, class_type, professors, room):
+        year = int(year)
+
         self.day = day
         self.from_ = from_
         self.to = to
@@ -24,9 +26,15 @@ class ProgrammedClass:
         return f'{self.group_class}'  # A2
 
     def get_group_year(self):
+        if self.year > 3:
+            return self.group_class
+
         return f'{self.year}{self.group_class[0]}'  # 1A
 
     def get_full_group_identifier(self):
+        if self.year > 3:
+            return self.group_class
+
         return f'{self.year}{self.group_class}'  # 1A1
 
     @staticmethod
