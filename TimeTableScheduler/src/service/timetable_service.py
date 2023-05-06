@@ -6,11 +6,11 @@ from src.service.models import ProgrammedClass
 
 
 class TimetableGenerator:
-    group_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Sala', 'Precventa', 'Packet']
-    year_group_headers = ['De la', 'Pana la', 'Grupa', 'Disciplina', 'Tip', 'Profesor', 'Sala', 'Precventa', 'Packet']
-    professor_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Sala', 'Precventa', 'Packet']
-    room_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Studenti', 'Precventa', 'Packet']
-    classes_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Profesor', 'Sala', 'Precventa', 'Packet']
+    group_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Sala']
+    year_group_headers = ['De la', 'Pana la', 'Grupa', 'Disciplina', 'Tip', 'Profesor', 'Sala']
+    professor_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Sala']
+    room_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Profesor', 'Studenti']
+    classes_headers = ['De la', 'Pana la', 'Disciplina', 'Tip', 'Studenti', 'Profesor', 'Sala']
 
     def __init__(self, programmed_classes: List[ProgrammedClass]):
         if not os.path.exists("html/pages"):
@@ -23,7 +23,6 @@ class TimetableGenerator:
 
         for p_class in classes:
             key = p_class.get_year()  # 1
-
             if key not in categorized_classes:
                 categorized_classes[key] = []
 
@@ -137,6 +136,7 @@ class TimetableGenerator:
         self.generate_classes_page()
         self.generate_student_page()
         self.generate_professors_page()
+        self.generate_rooms_page()
 
     def generate_main_page(self):
         html_page = HTMLPage()
@@ -165,14 +165,15 @@ class TimetableGenerator:
 
         # Generates the year timetable
         classes_categorized_by_year = self.categorize_by_year(self.programmed_classes)
-        for year_key in classes_categorized_by_year.keys():
+        classes_list = list(classes_categorized_by_year.keys())
+        classes_list.sort()
+        for year_key in classes_list:
             classes = classes_categorized_by_year[year_key]
             html_name = f'classes_{year_key}.html'
             html_page.add(f'<li><a href="pages/{html_name}">Anul {year_key}</a>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
-            html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data,
-                                       f'./html/pages/{html_name}')
+            html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
             # Generates the group type timetable
@@ -218,12 +219,14 @@ class TimetableGenerator:
         html_page = HTMLPage()
 
         html_page.add('<h1>Orar Profesori</h1>')
+        html_page.add('<ul>')
 
         categorized_classes = self.categorize_by_professor(self.programmed_classes)
-        html_page.add('<ul>')
-        for professor in categorized_classes.keys():
+        classes_list = list(categorized_classes.keys())
+        classes_list.sort()
+        for professor in classes_list:
             classes = categorized_classes[professor]
-            html_name = f'{professor}.html'
+            html_name = f'p_{professor}.html'
 
             html_page.add(f'<li><a href="pages/{html_name}">{professor}</a></li>')
 
@@ -242,17 +245,19 @@ class TimetableGenerator:
         html_page = HTMLPage()
 
         html_page.add('<h1>Orar Sali</h1>')
+        html_page.add('<ul>')
 
         categorized_classes = self.categorize_by_rooms(self.programmed_classes)
-        html_page.add('<ul>')
-        for room in categorized_classes.keys():
+        classes_list = list(categorized_classes.keys())
+        classes_list.sort()
+        for room in classes_list:
             classes = categorized_classes[room]
-            html_name = f'{room}.html'
+            html_name = f'r_{room}.html'
 
             html_page.add(f'<li><a href="pages/{html_name}">{room}</a></li>')
 
-            data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_professor_timetable)
-            html_table = TimetablePage(f'Orar {room}', self.room_headers, data, f'./html/pages/{html_name}')
+            data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_room_timetable)
+            html_table = TimetablePage(f'Orar Sala {room}', self.room_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
         html_page.add('</ul>')
@@ -266,17 +271,19 @@ class TimetableGenerator:
         html_page = HTMLPage()
 
         html_page.add('<h1>Orar Discipline</h1>')
+        html_page.add('<ul>')
 
         categorized_classes = self.categorize_by_class(self.programmed_classes)
-        html_page.add('<ul>')
-        for class_name in categorized_classes.keys():
+        classes_list = list(categorized_classes.keys())
+        classes_list.sort()
+        for class_name in classes_list:
             classes = categorized_classes[class_name]
-            html_name = f'{class_name}.html'
+            html_name = f'd_{class_name}.html'
 
             html_page.add(f'<li><a href="pages/{html_name}">{class_name}</a></li>')
 
-            data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_professor_timetable)
-            html_table = TimetablePage(f'Orar {class_name}', self.room_headers, data, f'./html/pages/{html_name}')
+            data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_class_timetable)
+            html_table = TimetablePage(f'Orar Disciplina {class_name}', self.room_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
         html_page.add('</ul>')

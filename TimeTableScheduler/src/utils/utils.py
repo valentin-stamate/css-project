@@ -6,6 +6,7 @@ from src.database_connection import DatabaseConnection
 from src.entities import *
 from src.enums.Configuration import Configuration
 from src.enums.Years import Years
+from src.service.models import ProgrammedClass
 
 
 class Utils:
@@ -347,3 +348,29 @@ class Utils:
             Utils.popup("Error", message)
         else:
             Utils.popup("Success", f"Data loaded into the database")
+
+    @staticmethod
+    def planned_disciplines_rows_to_objects(rows):
+        planned_disciplines = []
+
+        for discipline in rows:
+            time = discipline[1]
+
+            from_ = time.split(' - ')[0]
+            to = time.split(' - ')[1]
+
+            disciple_type = [discipline[6], discipline[7], discipline[8]]
+            disciple_types = ['Curs', 'Laborator', 'Seminar']
+
+            type_ = ''
+
+            for i in range(len(disciple_types)):
+                dt = int(disciple_type[i])
+
+                if dt == 1:
+                    type_ = disciple_types[i]
+
+            discipline = ProgrammedClass(discipline[2], from_, to, discipline[5], int(discipline[10]), discipline[3], type_, [discipline[4]], discipline[9])
+            planned_disciplines.append(discipline)
+
+        return planned_disciplines
