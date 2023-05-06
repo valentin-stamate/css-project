@@ -186,7 +186,7 @@ class TimetableGenerator:
             for group_type_key in classes_categorized_by_group_type.keys():
                 classes = classes_categorized_by_group_type[group_type_key]
                 html_name = f'classes_group_type_{group_type_key}.html'
-                html_page.add(f'<li><a href="pages/{html_name}">Grupa {group_type_key}</a>')
+                html_page.add(f'<li><a href="pages/{html_name}">{"Grupa" if year_key > 3 else "Semianul"} {group_type_key}</a>')
 
                 data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
                 html_table = TimetablePage(f'Orar {group_type_key}', self.year_group_headers, data,
