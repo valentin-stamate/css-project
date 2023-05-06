@@ -1,3 +1,4 @@
+import csv
 import tkinter as tk
 from tkinter import messagebox
 
@@ -10,7 +11,7 @@ class Utils:
     database_connection = DatabaseConnection.get_instance()
 
     @staticmethod
-    def add_teacher(name_entry, title_entry, tree):
+    def add_teacher(name_entry, title_entry, tree, table):
         name_val = name_entry.get()
         title_val = title_entry.get()
         if name_val != '' and title_val != '':
@@ -22,7 +23,7 @@ class Utils:
                 name_entry.delete(0, tk.END)
                 title_entry.delete(0, tk.END)
                 Utils.popup('Success', "Teacher added")
-                Utils.load_data(tree, Utils.database_connection.get_all_rows("Teachers"))
+                Utils.load_data(tree, table)
             elif status == 1:
                 Utils.popup('Failed', "Teacher already exists")
             else:
@@ -31,7 +32,7 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @staticmethod
-    def add_student_group(year, name_entry, tree):
+    def add_student_group(year, name_entry, tree, table):
         print(f"Year val {year}")
         year_val = Utils.convert_year(year)
         name_val = name_entry.get()
@@ -42,7 +43,7 @@ class Utils:
                 # year_entry.delete(0, tk.END)
                 name_entry.delete(0, tk.END)
                 Utils.popup('Success', "Student Group added")
-                Utils.load_data(tree, Utils.database_connection.get_all_rows("StudentGroups"))
+                Utils.load_data(tree, table)
             elif status == 1:
                 Utils.popup('Failed', "Student Group already exists")
             else:
@@ -52,7 +53,7 @@ class Utils:
 
     @classmethod
     def add_discipline(cls, name_entry, year, semester, has_course, has_laboratory,
-                       has_seminary, tree):
+                       has_seminary, tree, table):
 
         year_val = Utils.convert_year(year)
         for_years = Utils.format_all_years(year_val)
@@ -72,7 +73,7 @@ class Utils:
                 # year_entry.delete(0, tk.END)
                 name_entry.delete(0, tk.END)
                 Utils.popup('Success', "Discipline Added")
-                Utils.load_data(tree, Utils.database_connection.get_all_rows("Disciplines"))
+                Utils.load_data(tree, table)
             elif status == 1:
                 Utils.popup('Failed', "Discipline already exists")
             else:
@@ -81,7 +82,7 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @classmethod
-    def add_room(cls, name_entry, for_course, for_laboratory, for_seminary, tree):
+    def add_room(cls, name_entry, for_course, for_laboratory, for_seminary, tree, table):
         name_val = name_entry.get()
         for_course_val = for_course.get()
         for_laboratory_val = for_laboratory.get()
@@ -96,7 +97,7 @@ class Utils:
                 # year_entry.delete(0, tk.END)
                 name_entry.delete(0, tk.END)
                 Utils.popup('Success', "Room Added")
-                Utils.load_data(tree, Utils.database_connection.get_all_rows("Rooms"))
+                Utils.load_data(tree, table)
             elif status == 1:
                 Utils.popup('Failed', "Room already exists")
             else:
@@ -189,9 +190,10 @@ class Utils:
         messagebox.showinfo(popup_type, message)
 
     @classmethod
-    def load_data(cls, tree, data):
+    def load_data(cls, tree, table):
         tree.delete(*tree.get_children())
-        for row in data:
+        rows = Utils.database_connection.get_instance().get_all_rows(table)
+        for row in rows:
             tree.insert("", tk.END, values=row)
 
     @classmethod
@@ -218,3 +220,120 @@ class Utils:
         else:
             print("No valid year was found to be inserted for Discipline")
             return 0, 0, 0, 0, 0
+
+    @classmethod
+    def delete_entry(cls, tree, table):
+        selected_items = tree.selection()
+        if len(selected_items) == 0:
+            Utils.popup("Error", "At least one row must be selected for deletion")
+        else:
+            for item in selected_items:
+                item_values = tree.item(item)['values']
+                entry_id = item_values[0]
+                print(f"Table {table}, id = {entry_id}")
+                Utils.database_connection.delete_entry(table=table, id=entry_id)
+            Utils.load_data(tree, table)
+
+    @classmethod
+    def load_student_group_file(cls, tree, name):
+        rows = Utils.load_file(name)
+        if len(rows) == 0:
+            Utils.popup("Error", f'File not found /data/{name.lower()}.csv')
+        elif len(rows[0]) != 2:
+            Utils.popup("Invalid Input", f'File /data/{name.lower()}.csv should only have 2 columns')
+        else:
+            error_rows = []
+            for row in rows:
+                if len(row) != 2:
+                    error_rows.append((row, "Invalid number of columns"))
+                else:
+                    new_group = StudentGroups(row[0], row[1])
+                    status = Utils.database_connection.insert_group(new_group)
+                    if status != 0:
+                        error_rows.append((row, "Already exists"))
+            Utils.load_data(tree, name)
+            Utils.show_load_status(error_rows)
+
+    @classmethod
+    def load_teacher_file(cls, tree, name):
+        rows = Utils.load_file(name)
+        if len(rows) == 0:
+            Utils.popup("Error", f'File not found /data/{name.lower()}.csv')
+        elif len(rows[0]) != 2:
+            Utils.popup("Invalid Input", f'File /data/{name.lower()}.csv should only have 2 columns')
+        else:
+            error_rows = []
+            for row in rows:
+                if len(row) != 2:
+                    error_rows.append((row, "Invalid number of columns"))
+                else:
+                    new_teacher = Teachers(row[0], row[1])
+                    status = Utils.database_connection.insert_teacher(new_teacher)
+                    if status != 0:
+                        error_rows.append((row, "Already exists"))
+            Utils.load_data(tree, name)
+            Utils.show_load_status(error_rows)
+
+    @classmethod
+    def load_discipline_file(cls, tree, name):
+        rows = Utils.load_file(name)
+        if len(rows) == 0:
+            Utils.popup("Error", f'File not found /data/{name.lower()}.csv')
+        elif len(rows[0]) != 10:
+            Utils.popup("Invalid Input", f'File /data/{name.lower()}.csv should only have 2 columns')
+        else:
+            error_rows = []
+            for row in rows:
+                if len(row) != 10:
+                    error_rows.append((row, "Invalid number of columns"))
+                else:
+                    new_discipline = Disciplines(row[0], row[1], row[2], row[3], row[4],
+                                                 row[5], row[6], row[7], row[8], row[9])
+                    status = Utils.database_connection.insert_discipline(new_discipline)
+                    if status != 0:
+                        error_rows.append((row, "Already exists"))
+            Utils.load_data(tree, name)
+            Utils.show_load_status(error_rows)
+
+    @classmethod
+    def load_room_file(cls, tree, name):
+        rows = Utils.load_file(name)
+        if len(rows) == 0:
+            Utils.popup("Error", f'File not found /data/{name.lower()}.csv')
+        elif len(rows[0]) != 4:
+            Utils.popup("Invalid Input", f'File /data/{name.lower()}.csv should only have 2 columns')
+        else:
+            error_rows = []
+            for row in rows:
+                if len(row) != 4:
+                    error_rows.append((row, "Invalid number of columns"))
+                else:
+                    new_group = Rooms(row[0], row[1], row[1], row[1])
+                    status = Utils.database_connection.insert_room(new_group)
+                    if status != 0:
+                        error_rows.append((row, "Already exists"))
+            Utils.load_data(tree, name)
+            Utils.show_load_status(error_rows)
+
+    @classmethod
+    def load_file(cls, name: str):
+        print(f"Load file for {name}")
+        try:
+            with open(f'data/{name.lower()}.csv') as csv_file:
+                csv_reader = csv.reader(csv_file)
+                rows = []
+                for row in csv_reader:
+                    rows.append(row)
+                return rows[1:]
+        except FileNotFoundError as _:
+            return []
+
+    @classmethod
+    def show_load_status(cls, error_rows):
+        if len(error_rows) != 0:
+            message = ''
+            for row in error_rows:
+                message += f"Row {row[0]} could not be inserted. {row[1]}\n"
+            Utils.popup("Error", message)
+        else:
+            Utils.popup("Success", f"Data loaded into the database")

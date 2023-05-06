@@ -23,7 +23,8 @@ class SchedulerApp:
         self.notebook.pack(fill="both", expand=True)
         self.current_tab = None
         style = ttk.Style()
-        style.configure("myStyle.TNotebook", tabposition="n",compund='left', font=("TkDefaultFont", 40), padding=(20,5))
+        style.configure("myStyle.TNotebook", tabposition="n", compund='left', font=("TkDefaultFont", 40),
+                        padding=(20, 5))
         self.notebook.configure(style="myStyle.TNotebook")
 
         # create tabs
@@ -236,11 +237,14 @@ class SchedulerApp:
         for key in Configuration.COLUMN_WIDTHS[table].keys():
             tree.column(key, width=Configuration.COLUMN_WIDTHS[table][key], anchor='center')
 
-        Utils.load_data(tree, rows)
+        Utils.load_data(tree, table)
 
         self.create_insert_form(data_frame, table, tree)
         self.notebook.add(tab, text=f"{tab_name}")
         self.select_tab(tab)
+        delete_button = tk.Button(tab, text="Delete",
+                                  command=lambda tree_view=tree: Utils.delete_entry(tree_view, table))
+        delete_button.pack(side='bottom', pady=10)
         data_frame.pack()
         tree.pack()
 
@@ -256,8 +260,9 @@ class SchedulerApp:
         root.mainloop()
 
     def create_insert_form(self, frame, name, tree):
+        print(f"inser from {name}")
         add_font = Font(size=13)
-        if name == "Student Groups":
+        if name == "StudentGroups":
 
             add_label = tk.Label(frame, text="Adaugare Grupa:", font=add_font)
             values = ["Anul 1", "Anul 2", "Anul 3", "Master Anul 1", "Master Anul 2"]
@@ -275,8 +280,11 @@ class SchedulerApp:
             name_entry.pack(pady=2)
 
             add_button = tk.Button(frame, text="Adauga",
-                                   command=lambda: Utils.add_student_group(self.selected_year, name_entry, tree))
+                                   command=lambda: Utils.add_student_group(self.selected_year, name_entry, tree, name))
             add_button.pack(pady=10)
+            load_file_button = tk.Button(frame, text="Incarca un fisier",
+                                         command=lambda: Utils.load_student_group_file(tree, name))
+            load_file_button.pack(pady=10)
         elif name == "Teachers":
             add_label = tk.Label(frame, text="Adaugare Profesor:", font=add_font)
             name_label = tk.Label(frame, text="Nume:")
@@ -290,8 +298,12 @@ class SchedulerApp:
             title_label.pack(pady=2)
             title_entry.pack(pady=2)
 
-            add_button = tk.Button(frame, text="Adauga", command=lambda: Utils.add_teacher(name_entry, title_entry, tree))
+            add_button = tk.Button(frame, text="Adauga",
+                                   command=lambda: Utils.add_teacher(name_entry, title_entry, tree, name))
             add_button.pack(pady=10)
+            load_file_button = tk.Button(frame, text="Incarca un fisier",
+                                         command=lambda: Utils.load_teacher_file(tree, name))
+            load_file_button.pack(pady=10)
         elif name == "Disciplines":
             add_label = tk.Label(frame, text="Adaugare Disciplina:", font=add_font)
             semester_values = Semesters.get_all_values()
@@ -332,8 +344,13 @@ class SchedulerApp:
             add_button = tk.Button(frame, text="Adauga",
                                    command=lambda: Utils.add_discipline(name_entry, self.selected_year,
                                                                         self.selected_semester, for_course_var,
-                                                                        for_laboratory_var, for_seminary_var, tree))
+                                                                        for_laboratory_var, for_seminary_var, tree,
+                                                                        name))
             add_button.pack(pady=10)
+
+            load_file_button = tk.Button(frame, text="Incarca un fisier",
+                                         command=lambda: Utils.load_discipline_file(tree, name))
+            load_file_button.pack(pady=10)
         elif name == "Rooms":
             add_label = tk.Label(frame, text="Adaugare Sala:", font=add_font)
             add_label.pack()
@@ -355,8 +372,11 @@ class SchedulerApp:
 
             add_button = tk.Button(frame, text="Adauga",
                                    command=lambda: Utils.add_room(name_entry, for_course_var, for_laboratory_var,
-                                                                  for_seminary_var, tree))
+                                                                  for_seminary_var, tree, name))
             add_button.pack(pady=10)
+            load_file_button = tk.Button(frame, text="Incarca un fisier",
+                                         command=lambda: Utils.load_room_file(tree, name))
+            load_file_button.pack(pady=10)
         elif name == "Schedules":
             pass
         else:
