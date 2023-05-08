@@ -233,19 +233,20 @@ class Utils:
 
     @classmethod
     def format_all_years(cls, year):
+        print(f"Format {year}")
         if year == 1:
             return 1, 0, 0, 0, 0
         elif year == 2:
-            return 1, 0, 0, 0, 0
+            return 0, 1, 0, 0, 0
         elif year == 3:
-            return 1, 0, 0, 0, 0
+            return 0, 0, 1, 0, 0
         elif year == 4:
-            return 1, 0, 0, 0, 0
+            return 0, 0, 0, 1, 0
         elif year == 5:
-            return 1, 0, 0, 0, 0
+            return 0, 0, 0, 0, 1
         else:
             print("No valid year was found to be inserted for Discipline")
-            return 0, 0, 0, 0, 0
+            return 1, 0, 0, 0, 0
 
     @classmethod
     def delete_entry(cls, tree, table, timeslots_tree=None):
