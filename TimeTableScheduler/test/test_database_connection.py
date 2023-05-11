@@ -1,6 +1,5 @@
 import unittest
 from unittest.mock import Mock
-
 from src.database_connection import DatabaseConnection
 from src.entities import Teachers, Disciplines, Rooms, TimeSlots, StudentGroups
 
