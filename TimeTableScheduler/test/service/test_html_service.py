@@ -1,27 +1,13 @@
 import unittest
 
-from tests.mock import TIMETABLE_MOCK
-
 from src.service.timetable_service import TimetableGenerator
+from test.const.mock import TIMETABLE_MOCK
 
 
 class TestTimetablePage(unittest.TestCase):
-    pass
-    # def test_generate_html(self):
-    #     title = "Timetable test"
-    #     data = [
-    #         ['Head 1', 'Head 2', 'Head 3', 'Head 4', 'Head 5'],
-    #         ['Day 1'],
-    #         ['12', '14', 'Name', 'Author', 'C102'],
-    #         ['Day 2'],
-    #         ['12', '14', 'Name', 'Author', 'C102'],
-    #     ]
-    #
-    #     timetable = TimetablePage(title, data, 5, 'test_timetable.html')
-    #     html = timetable.generate_html()
-    #
-    #     assert title in html
-    #     assert MOCK_STUDENT_TIMETABLE in html
+
+    def test_demo(self):
+        pass
 
 
 class TestTimetableService(unittest.TestCase):
