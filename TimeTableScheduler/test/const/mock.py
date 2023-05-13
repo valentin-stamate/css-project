@@ -29,8 +29,9 @@ MOCK_PLANNED_COURSES = [
     (22, '08:00 - 10:00', 'Luni', 'Calculabilitate decidabilitate si complexitate', 'Crisan Gloria-Cerasela', 'MLC1', 1,
      0, 0, 'C112', 4),
     (
-    23, '08:00 - 10:00', 'Luni', 'Calculabilitate decidabilitate si complexitate', 'Crisan Gloria-Cerasela', 'MSAI1', 1,
-    0, 0, 'C112', 4),
+        23, '08:00 - 10:00', 'Luni', 'Calculabilitate decidabilitate si complexitate', 'Crisan Gloria-Cerasela',
+        'MSAI1', 1,
+        0, 0, 'C112', 4),
     (24, '08:00 - 10:00', 'Luni', 'Calculabilitate decidabilitate si complexitate', 'Crisan Gloria-Cerasela', 'MSD1', 1,
      0, 0, 'C112', 4),
     (25, '08:00 - 10:00', 'Luni', 'Calculabilitate decidabilitate si complexitate', 'Crisan Gloria-Cerasela', 'MSI1', 1,
@@ -42,8 +43,6 @@ MOCK_PLANNED_COURSES = [
     (30, '08:00 - 10:00', 'Luni', 'Managementul proiectelor', 'Croitoru Eugen', 'MSD2', 1, 0, 0, 'C114', 5),
     (31, '08:00 - 10:00', 'Luni', 'Managementul proiectelor', 'Croitoru Eugen', 'MSI2', 1, 0, 0, 'C114', 5)
 ]
-
-MOCK_STUDENT_TIMETABLE = '<table><tr><th colspan="1">Head 1</th><th colspan="1">Head 2</th><th colspan="1">Head 3</th><th colspan="1">Head 4</th><th colspan="1">Head 5</th></tr><tr><td colspan="5">Day 1</td></tr><tr><td colspan="1">12</td><td colspan="1">14</td><td colspan="1">Name</td><td colspan="1">Author</td><td colspan="1">C102</td></tr><tr><td colspan="5">Day 2</td></tr><tr><td colspan="1">12</td><td colspan="1">14</td><td colspan="1">Name</td><td colspan="1">Author</td><td colspan="1">C102</td></tr></table>'
 
 TIMETABLE_MOCK: List[ProgrammedClass] = [
     ProgrammedClass(day="Monday", to="10:00", from_="8:00", group_class="A1", year=1,
@@ -84,8 +83,21 @@ TIMETABLE_MOCK: List[ProgrammedClass] = [
                     class_type='Lecture', professors=['Singh'], room='A103'),
 ]
 
+TIMETABLE_MOCK_SMALL: List[ProgrammedClass] = [
+    ProgrammedClass(day="Monday", to="10:00", from_="8:00", group_class="A1", year=1,
+                    class_name="Introduction to Programming", class_type="Lecture", professors=['Smith'],
+                    room="A101"),
+    ProgrammedClass(day='Friday', to='14:00', from_='12:00', group_class='A4', year=2, class_name='Database Systems',
+                    class_type='Lecture', professors=['Singh'], room='A103'),
+]
+
 MOCK_STUDENT_GROUPS = [
     (1, 1, 'A1'),
     (2, 2, 'A1'),
     (3, 3, 'A1'),
 ]
+
+MAIN_PAGE_MOCK = '<h1>Orar</h1><p></p><h3>Facultatea de Informatica</h3><ul><li><a ' \
+                 'href="students.html">Studenti</a></li><li><a href="professors.html">Profesori</a></li><li><a ' \
+                 'href="rooms.html">Sali</a></li><li><a ' \
+                 'href="classes.html">Discipline</a></li></ul><p></p><div>Generated with <b>SmartTimetable</b></div>'
