@@ -3,8 +3,6 @@ import unittest
 from unittest.mock import patch, mock_open, MagicMock
 
 from src.service.html_service import HTMLPage, TimetablePage
-from src.service.timetable_service import TimetableGenerator
-from test.const.mock import TIMETABLE_MOCK
 
 
 class TestHTMLPage(unittest.TestCase):
@@ -66,7 +64,7 @@ class TestTimetablePage(unittest.TestCase):
 
             self.assertEqual(result, '<h1>Title</h1>'
                                      '<div>'
-                                     '<strong>Generated: 2023-05-13</strong></div>'
+                                     f'<strong>Generated: {datetime.date.today().isoformat()}</strong></div>'
                                      '<hr>'
                                      '<table>'
                                         '<tr>'

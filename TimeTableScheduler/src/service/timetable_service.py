@@ -1,6 +1,5 @@
 import os
 from typing import List
-
 from src.service.html_service import HTMLPage, TimetablePage
 from src.service.models import ProgrammedClass
 
