@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import patch
 
 from src.database_connection import DatabaseConnection
 from src.service.models import ProgrammedClass
@@ -156,3 +156,22 @@ class UtilsTest(unittest.TestCase):
             self.fail("Should have thrown exception")
         except Exception as e:
             self.assertTrue("Couldn't find group" in e.args[0])
+
+    def test_format_all_years(self):
+        expected_value = (1, 0, 0, 0, 0)
+        result = Utils.format_all_years(1)
+        self.assertEqual(result, expected_value)
+        result = Utils.format_all_years(-1)
+        self.assertEqual(result, expected_value)
+        result = Utils.format_all_years(2)
+        expected_value = (0, 1, 0, 0, 0)
+        self.assertEqual(result, expected_value)
+        result = Utils.format_all_years(3)
+        expected_value = (0, 0, 1, 0, 0)
+        self.assertEqual(result, expected_value)
+        result = Utils.format_all_years(4)
+        expected_value = (0, 0, 0, 1, 0)
+        self.assertEqual(result, expected_value)
+        result = Utils.format_all_years(5)
+        expected_value = (0, 0, 0, 0, 1)
+        self.assertEqual(result, expected_value)

@@ -100,7 +100,11 @@ MOCK_STUDENT_GROUPS = [
     (2, 2, 'A1'),
     (3, 3, 'A1'),
 ]
-
+MOCK_STUDENT_GROUPS_FORMATTED = [
+    [1, 'Anul 1', 'A1'],
+    [2, 'Anul 2', 'A1'],
+    [3, 'Anul 3', 'A1'],
+]
 MAIN_PAGE_MOCK = '<h1>Orar</h1><p></p><h3>Facultatea de Informatica</h3><ul><li><a ' \
                  'href="students.html">Studenti</a></li><li><a href="professors.html">Profesori</a></li><li><a ' \
                  'href="rooms.html">Sali</a></li><li><a ' \
@@ -129,4 +133,18 @@ MOCK_CLASSES_PAGE_2 = f'<h1>Orar Disciplina Database Systems</h1><div><strong>Ge
 MOCK_CLASSES_PAGE_3 = f'<h1>Orar Disciplina Introduction to Programming</h1><div><strong>Generated: {datetime.date.today().isoformat()}</strong></div><hr><table><tr><th colspan="1">De la</th><th colspan="1">Pana la</th><th colspan="1">Disciplina</th><th colspan="1">Tip</th><th colspan="1">Profesor</th><th colspan="1">Studenti</th></tr><tr><td colspan="6">Monday</td></tr><tr><td colspan="1">8:00</td><td colspan="1">10:00</td><td colspan="1">Introduction to Programming</td><td colspan="1">Lecture</td><td colspan="1">Smith</td><td colspan="1">1A1</td></tr></table>'
 MOCK_CLASSES_PAGE = f'<h1>Orar Discipline</h1><ul><li><a href="pages/d_Data Structures and Algorithms.html">Data Structures and Algorithms</a></li><li><a href="pages/d_Database Systems.html">Database Systems</a></li><li><a href="pages/d_Introduction to Programming.html">Introduction to Programming</a></li></ul>'
 
+MOCK_ROOMS = [
+    (1, 'Room1', 1, 1, 0),
+    (2, 'Room2', 1, 1, 0),
+]
+MOCK_ROOMS_FORMATTED = [
+    [1, 'Room1', 'Da', 'Da', 'Nu'],
+    [2, 'Room2', 'Da', 'Da', 'Nu'],
+]
 
+MOCK_DISCIPLINES = [
+    (1, 'Discipline1', 1, 0, 0, 0, 0, 1, 0, 1, 0)
+]
+MOCK_DISCIPLINES_FORMATTED = [
+    (1, 'Discipline1', 'Anul 1', 1, 'Nu', 'Da', 'Nu')
+]

@@ -1,13 +1,56 @@
-import time
 import unittest
 from unittest import mock
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock, patch
 
 from src.database_connection import DatabaseConnection
 from src.entities import Teachers, Disciplines, Rooms, TimeSlots, StudentGroups
 from src.enums.Configuration import Configuration
 from src.enums.Years import Years
-from test.const.mock import MOCK_STUDENT_GROUPS
+from test.const.mock import *
+
+
+class DatabaseConnectionQueryTest(unittest.TestCase):
+    def setUp(self):
+        self.db = DatabaseConnection.get_instance()
+
+    def tearDown(self):
+        self.db.close()
+        self.db.__instance = None
+        self.db = None
+
+    def test_execute_query(self):
+        mock_cursor = MagicMock()
+        mock_connection = MagicMock()
+        query = "SELECT * FROM Rooms"
+        with patch.object(mock_cursor, 'execute') as mock_execute, \
+                patch.object(mock_connection, 'commit') as mock_commit:
+            mock_execute.return_value = None
+            mock_commit.return_value = None
+
+            self.db.cursor = mock_cursor
+            self.db.connection = mock_connection
+            result = self.db.execute_query(query)
+
+            mock_execute.assert_called_once_with(query)
+            mock_commit.assert_called_once_with()
+            self.assertEqual(result, 0)
+
+    def test_execute_query_exception(self):
+        mock_cursor = MagicMock()
+        mock_connection = MagicMock()
+        query = "SELECT * FROM Rooms"
+        with patch.object(mock_cursor, 'execute') as mock_execute, \
+                patch.object(mock_connection, 'commit') as mock_commit:
+            mock_execute.side_effect = Exception("Test exception")
+            mock_execute.return_value = None
+            mock_commit.return_value = None
+
+            self.db.cursor = mock_cursor
+            self.db.connection = mock_connection
+            result = self.db.execute_query(query)
+
+            mock_execute.assert_called_once_with(query)
+            self.assertEqual(result, 2)
 
 
 class DatabaseConnectionTest(unittest.TestCase):
@@ -18,32 +61,6 @@ class DatabaseConnectionTest(unittest.TestCase):
         self.db.close()
         self.db.__instance = None
         self.db = None
-
-    # def test_execute_query_valid(self):
-    #     query = "INSERT INTO Teachers (name, title) VALUES ('Nume Profesor', 'Titlu profesor')"
-    #     self.db.cursor = Mock()
-    #     self.db.cursor.execute = Mock(return_value=True)
-    #     self.db.connection = Mock()
-    #     self.db.connection.commit = Mock(return_value=True)
-    #
-    #     result = self.db.execute_query(query)
-    #
-    #     self.db.cursor.execute.assert_called_once_with(query)
-    #     self.db.connection.commit.assert_called_once()
-    #     self.assertEqual(result, 0)
-    #
-    # def test_execute_query_invalid(self):
-    #     query = "INVALID QUERY"
-    #     self.db.cursor = Mock()
-    #     self.db.cursor.execute.side_effect = Exception()
-    #     self.db.connection = Mock()
-    #     self.db.connection.commit = Mock()
-    #
-    #     result = self.db.execute_query(query)
-    #
-    #     self.db.cursor.execute.assert_called_once_with(query)
-    #     self.db.connection.commit.assert_not_called()
-    #     self.assertEqual(result, 2)
 
     def test_insert_teacher_valid_values(self):
         teacher = Teachers(name="Nume Profesor", title="Titlu profesor")
@@ -267,3 +284,19 @@ class DatabaseConnectionTest(unittest.TestCase):
         # Test that an exception is raised if a second instance is created
         with self.assertRaises(Exception):
             db2 = DatabaseConnection()
+
+    def test_format_data(self):
+        result = self.db.format_data("StudentGroups", MOCK_STUDENT_GROUPS)
+        self.assertEqual(result, MOCK_STUDENT_GROUPS_FORMATTED)
+
+        result = self.db.format_data("Rooms", MOCK_ROOMS)
+        self.assertEqual(result, MOCK_ROOMS_FORMATTED)
+
+        result = self.db.format_data("Disciplines", MOCK_DISCIPLINES)
+        self.assertEqual(result, MOCK_DISCIPLINES_FORMATTED)
+        #
+        # result = self.db.format_data("TimeSlots", MOCK_STUDENT_GROUPS)
+        # self.assertEqual(result, MOCK_STUDENT_GROUPS_FORMATTED)
+
+        result = self.db.format_data("Invalid", MOCK_STUDENT_GROUPS)
+        self.assertEqual(result, MOCK_STUDENT_GROUPS)
