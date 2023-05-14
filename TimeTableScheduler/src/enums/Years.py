@@ -57,27 +57,3 @@ class Years:
             return 5
 
         return 0
-
-    @staticmethod
-    def is_any_year(year: str):
-        return Years.is_bachelor_first_year(year) or Years.is_bachelor_second_year(year) or Years.is_bachelor_third_year(year) \
-            or Years.is_master_first_year(year) or Years.is_master_second_year(year)
-
-    @staticmethod
-    def get_year_index(year: str):
-        if Years.is_bachelor_first_year(year):
-            return 1
-
-        if Years.is_bachelor_second_year(year):
-            return 2
-
-        if Years.is_bachelor_third_year(year):
-            return 3
-
-        if Years.is_master_first_year(year):
-            return 4
-
-        if Years.is_master_second_year(year):
-            return 5
-
-        return 0
