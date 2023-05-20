@@ -16,31 +16,45 @@ class Years:
 
     @staticmethod
     def is_bachelor_first_year(year: str):
+        assert year is not None and type(year) == str and len(year.strip()) > 0
+
         return year == Years.BACHELOR_YEAR_1
 
     @staticmethod
     def is_bachelor_second_year(year: str):
+        assert year is not None and type(year) == str and len(year.strip()) > 0
+
         return year == Years.BACHELOR_YEAR_2
 
     @staticmethod
     def is_bachelor_third_year(year: str):
+        assert year is not None and type(year) == str and len(year.strip()) > 0
+
         return year == Years.BACHELOR_YEAR_3
 
     @staticmethod
     def is_master_first_year(year: str):
+        assert year is not None and type(year) == str and len(year.strip()) > 0
+
         return year == Years.MASTER_YEAR_1
 
     @staticmethod
     def is_master_second_year(year: str):
+        assert year is not None and type(year) == str and len(year.strip()) > 0
+
         return year == Years.MASTER_YEAR_2
 
     @staticmethod
     def is_any_year(year: str):
+        assert year is not None and type(year) == str and len(year.strip()) > 0
+
         return Years.is_bachelor_first_year(year) or Years.is_bachelor_second_year(year) or Years.is_bachelor_third_year(year) \
             or Years.is_master_first_year(year) or Years.is_master_second_year(year)
 
     @staticmethod
     def get_year_index(year: str):
+        assert year is not None and type(year) == str and len(year.strip()) > 0
+
         if Years.is_bachelor_first_year(year):
             return 1
 

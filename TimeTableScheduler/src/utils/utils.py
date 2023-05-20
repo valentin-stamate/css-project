@@ -120,7 +120,14 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @staticmethod
-    def add_schedule(discipline, student_group, teacher, time_slot, class_type, room,timeslots_tree):
+    def add_schedule(discipline, student_group, teacher, time_slot, class_type, room, timeslots_tree):
+        assert discipline is not None and type(discipline) == str
+        assert teacher is not None and type(teacher) == str
+        assert time_slot is not None and type(time_slot) == str
+        assert class_type is not None and type(class_type) == str
+        assert room is not None and type(room) == str
+        assert room is not None and type(room) == str
+
         if len(discipline.strip()) == 0 or len(student_group.strip()) == 0 or \
                 len(teacher.strip()) == 0 or len(time_slot.strip()) == 0 or \
                 len(class_type.strip()) == 0 or len(room.strip()) == 0:
@@ -144,7 +151,11 @@ class Utils:
 
     @staticmethod
     def get_discipline_id_by_name(discipline_name):
+        assert discipline_name is not None and type(discipline_name) == str
+
         disciplines = Utils.database_connection.get_all_rows_unformatted("Disciplines")
+
+        assert disciplines is not None
 
         for discipline in disciplines:
             if discipline[1] == discipline_name:
@@ -154,6 +165,8 @@ class Utils:
 
     @staticmethod
     def get_student_group_ids_by_name(student_group_name) -> [int]:
+        assert student_group_name is not None and type(student_group_name) == str
+
         if student_group_name.strip() == '':
             return []
 
@@ -177,6 +190,8 @@ class Utils:
                 "StudentGroups", "group_name", f"\"{student_group_name}\"", "year", year
             )
 
+        assert matched_student_group_entities is not None
+
         if len(matched_student_group_entities) == 0:
             raise Exception(f"Couldn't find group \"{student_group_name}\" in database.")
 
@@ -184,6 +199,8 @@ class Utils:
 
     @staticmethod
     def get_teacher_id_by_name(teacher_with_name_and_title):
+        assert teacher_with_name_and_title is not None and type(teacher_with_name_and_title) == str
+
         if teacher_with_name_and_title.strip() == '':
             return 1
 
@@ -193,6 +210,9 @@ class Utils:
         matched_teacher_entities = Utils.database_connection.get_all_rows_by_columns(
             "Teachers", "name", f"\"{teacher_name}\"", "title", f"\"{teacher_title}\""
         )
+
+        assert matched_teacher_entities is not None
+
         if len(matched_teacher_entities) == 0:
             raise Exception(f"Couldn't find teacher \"{teacher_with_name_and_title}\" in database.")
 
@@ -200,7 +220,11 @@ class Utils:
 
     @staticmethod
     def get_room_id_by_name(room_name):
+        assert room_name is not None and type(room_name) == str
+
         rooms = Utils.database_connection.get_all_rows_unformatted("Rooms")
+
+        assert rooms is not None
 
         for room in rooms:
             if room[1] == room_name:

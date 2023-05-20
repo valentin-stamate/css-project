@@ -43,6 +43,9 @@ class DatabaseConnection:
         return rows
 
     def get_all_rows_by_columns(self, table_name, column1, value1, column2, value2):
+        assert table_name is not None and column1 is not None and value1 is not None \
+               and column2 is not None and value2 is not None
+
         self.cursor.execute(f"SELECT * FROM {table_name} WHERE {column1} = {value1} AND {column2} = {value2}")
         rows = self.cursor.fetchall()
         return rows
@@ -97,6 +100,8 @@ class DatabaseConnection:
         return self.execute_query(query)
 
     def insert_schedule(self, schedule: TimeSlots):
+        assert schedule is not None
+
         query = f"INSERT INTO TimeSlots (time, weekday, discipline_id, teacher_id, student_group_id, is_course, is_laboratory, is_seminary, room_id) VALUES " \
                 f"('{schedule.time}', " \
                 f"'{schedule.weekday}', " \
@@ -155,6 +160,9 @@ class DatabaseConnection:
         return False
 
     def format_data(self, table_name, rows):
+        assert table_name is not None and type(table_name) == str
+        assert rows is not None and type(rows) == list
+
         if table_name == 'StudentGroups':
             return self.replace(rows, 1, Configuration.CONVERSION_YEARS_FOR_DB)
         elif table_name == 'Rooms':

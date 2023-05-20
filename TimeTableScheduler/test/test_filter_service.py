@@ -184,6 +184,8 @@ class TestFilterService(unittest.TestCase):
         try:
             response = target.get_year_index_from_string(year)
             self.fail("Should have thrown exception")
+        except AssertionError:
+            self.assertTrue(True)
         except Exception as e:
             self.assertTrue("Invalid year" in e.args[0])
 
@@ -233,6 +235,8 @@ class TestFilterService(unittest.TestCase):
         try:
             response = target.encode_year_str_to_int(year)
             self.fail("Should have thrown exception")
+        except AssertionError:
+            self.assertTrue(True)
         except Exception as e:
             self.assertTrue("Invalid year" in e.args[0])
 
@@ -283,11 +287,14 @@ class TestFilterService(unittest.TestCase):
 
     def test_get_teacher_entity_id_by_name_and_title_empty_teacher(self):
         teacher_with_name_and_title = ""
-        expected_response = 1
 
-        response = target.get_teacher_entity_id_by_name_and_title(teacher_with_name_and_title)
-
-        self.assertEqual(expected_response, response)
+        try:
+            response = target.get_teacher_entity_id_by_name_and_title(teacher_with_name_and_title)
+            self.fail("Should have thrown exception")
+        except AssertionError:
+            self.assertTrue(True)
+        except Exception as e:
+            self.fail(f"Should have thrown AssertionError, but has thrown {type(e)}")
 
     @patch(target="src.database_connection.DatabaseConnection.get_all_rows_by_columns",
            return_value=[["3", "Ion Ionescu", "Conf. Dr."]])
@@ -312,11 +319,14 @@ class TestFilterService(unittest.TestCase):
 
     def test_get_student_group_entity_ids_by_name_empty_name(self):
         student_group_name = ""
-        expected_response = 1
 
-        response = target.get_student_group_entity_ids_by_name(student_group_name)
-
-        self.assertEqual(expected_response, response)
+        try:
+            response = target.get_student_group_entity_ids_by_name(student_group_name)
+            self.fail("Should have thrown exception")
+        except AssertionError:
+            self.assertTrue(True)
+        except Exception as e:
+            self.fail(f"Should have thrown AssertionError, but has thrown {type(e)}")
 
     @patch(target="src.database_connection.DatabaseConnection.get_all_rows_by_column",
            side_effect=mocked_db_call_student_group_entity_ids)

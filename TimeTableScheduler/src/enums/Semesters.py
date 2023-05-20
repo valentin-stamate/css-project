@@ -12,8 +12,12 @@ class Semesters:
 
     @staticmethod
     def is_first_semester(semester: str):
+        assert semester in Semesters.get_all_values()
+
         return semester == Semesters.FIRST_SEMESTER
 
     @staticmethod
     def is_second_semester(semester: str):
+        assert semester in Semesters.get_all_values()
+
         return semester == Semesters.SECOND_SEMESTER

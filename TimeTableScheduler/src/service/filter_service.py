@@ -6,6 +6,8 @@ from src.enums.Years import Years
 
 
 def get_year_index_from_string(year: str) -> int:
+    assert year is not None and type(year) == str and len(year.strip()) > 0
+
     year_index = 0
     if Years.is_bachelor_first_year(year):
         year_index = 2
@@ -25,6 +27,8 @@ def get_year_index_from_string(year: str) -> int:
 
 
 def encode_year_str_to_int(year: str) -> int:
+    assert year is not None and type(year) == str and len(year.strip()) > 0
+
     year_int = 0
     if Years.is_bachelor_first_year(year):
         year_int = 1
@@ -44,6 +48,9 @@ def encode_year_str_to_int(year: str) -> int:
 
 
 def get_disciplines_for_year_and_semester(year: str, semester: str):
+    assert year is not None and type(year) == str and len(year.strip()) > 0
+    assert semester is not None and type(semester) == str and len(semester.strip()) > 0
+
     disciplines = DatabaseConnection.get_instance().get_all_rows_unformatted("Disciplines")
 
     year_index = get_year_index_from_string(year)
@@ -55,10 +62,14 @@ def get_disciplines_for_year_and_semester(year: str, semester: str):
         if int(discipline[year_index]) == 1 and int(discipline[7]) == semester:
             filtered_disciplines.append(discipline[1])
 
+    assert filtered_disciplines is not None
     return filtered_disciplines
 
 
 def get_student_groups_in_year(year: str, class_type: str):
+    assert year is not None and type(year) == str and len(year.strip()) > 0
+    assert class_type is not None and type(class_type) == str and len(class_type.strip()) > 0
+
     if class_type == 'Curs':
         return Years.get_all_values()
 
@@ -72,10 +83,14 @@ def get_student_groups_in_year(year: str, class_type: str):
             name = student_group[2] if year_index > 3 else str(year_index) + student_group[2]
             filtered_student_groups.append(name)
 
+    assert filtered_student_groups is not None
     return filtered_student_groups
 
 
 def get_teacher_entity_id_by_name_and_title(teacher_with_name_and_title: str) -> int:
+    assert teacher_with_name_and_title is not None and type(teacher_with_name_and_title) == str and \
+           len(teacher_with_name_and_title.strip()) > 0
+
     if teacher_with_name_and_title.strip() == '':
         return 1
 
@@ -85,6 +100,9 @@ def get_teacher_entity_id_by_name_and_title(teacher_with_name_and_title: str) ->
     matched_teacher_entities = DatabaseConnection.get_instance().get_all_rows_by_columns(
         "Teachers", "name", f"\"{teacher_name}\"", "title", f"\"{teacher_title}\""
     )
+
+    assert matched_teacher_entities is not None
+
     if len(matched_teacher_entities) == 0:
         raise Exception(f"Couldn't find teacher \"{teacher_with_name_and_title}\" in database.")
 
@@ -92,8 +110,7 @@ def get_teacher_entity_id_by_name_and_title(teacher_with_name_and_title: str) ->
 
 
 def get_student_group_entity_ids_by_name(student_group_name: str) -> [int]:
-    if student_group_name.strip() == '':
-        return 1
+    assert student_group_name is not None and type(student_group_name) == str and len(student_group_name.strip()) > 0
 
     if Years.is_any_year(student_group_name):
         year_index = Years.get_year_index(student_group_name)
@@ -115,6 +132,8 @@ def get_student_group_entity_ids_by_name(student_group_name: str) -> [int]:
             "StudentGroups", "group_name", f"\"{student_group_name}\"", "year", year
         )
 
+    assert matched_student_group_entities is not None
+
     if len(matched_student_group_entities) == 0:
         raise Exception(f"Couldn't find group \"{student_group_name}\" in database.")
 
@@ -122,6 +141,8 @@ def get_student_group_entity_ids_by_name(student_group_name: str) -> [int]:
 
 
 def get_unavailable_slots_for_teacher(teacher_id: int):
+    assert teacher_id is not None and type(teacher_id) == int
+
     classes_for_teacher = DatabaseConnection.get_instance().get_all_rows_by_column(
         "TimeSlots", "teacher_id", teacher_id
     )
@@ -141,6 +162,8 @@ def get_unavailable_slots_for_teacher(teacher_id: int):
 
 
 def get_unavailable_slots_for_student_groups(group_ids: [int]) -> list[dict]:
+    assert group_ids is not None and type(group_ids) == list
+
     periods = []
 
     for group_id in group_ids:
@@ -173,6 +196,9 @@ def get_all_time_slots() -> dict:
 
 
 def remove_slots(remove_from: dict, entities: dict) -> dict:
+    assert remove_from is not None and type(remove_from) == dict
+    assert entities is not None and type(entities) == dict
+
     for weekday in entities.keys():
         if weekday in remove_from.keys():
             for time_period in entities[weekday]:
@@ -183,10 +209,14 @@ def remove_slots(remove_from: dict, entities: dict) -> dict:
         if len(remove_from[weekday]) == 0:
             del remove_from[weekday]
 
+    assert remove_from is not None
+
     return remove_from
 
 
 def format_slots(slots: dict) -> list:
+    assert slots is not None and type(slots) == dict
+
     new_slots = []
 
     for weekday in slots:
@@ -197,21 +227,34 @@ def format_slots(slots: dict) -> list:
 
 
 def get_available_slots_for_teacher_and_student_group(teacher: str, student_group: str):
+    assert teacher is not None and type(teacher) == str and len(teacher.strip()) > 0
+    assert student_group is not None and type(student_group) == str and len(student_group.strip()) > 0
+
     available_time_slots = get_all_time_slots()
+
+    assert available_time_slots is not None
 
     teacher_id = get_teacher_entity_id_by_name_and_title(teacher)
     teacher_unavailable_slots = get_unavailable_slots_for_teacher(teacher_id)
     available_time_slots = remove_slots(available_time_slots, teacher_unavailable_slots)
 
+    assert available_time_slots is not None
+
     group_ids = get_student_group_entity_ids_by_name(student_group)
     student_group_unavailable_slots_list = get_unavailable_slots_for_student_groups(group_ids)
     for student_group_unavailable_slots in student_group_unavailable_slots_list:
         available_time_slots = remove_slots(available_time_slots, student_group_unavailable_slots)
+        assert available_time_slots is not None
 
     return format_slots(available_time_slots)
 
 
 def get_available_rooms_for_time_slot_and_class_type(time_slot: str, course: bool, laboratory: bool, seminary: bool):
+    assert time_slot is not None and type(time_slot) == str and len(time_slot.strip()) > 0
+    assert course is not None and type(course) == bool
+    assert laboratory is not None and type(laboratory) == bool
+    assert seminary is not None and type(seminary) == bool
+
     rooms = []
     if course:
         rooms = DatabaseConnection.get_instance().get_all_rows_by_column('Rooms', 'can_host_course', course)

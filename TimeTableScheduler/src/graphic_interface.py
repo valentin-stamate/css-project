@@ -161,6 +161,7 @@ class SchedulerApp:
             year = self.year_var.get()
 
             disciplines = get_disciplines_for_year_and_semester(year, semester)
+            assert disciplines is not None and type(disciplines) == list
 
             menu = self.discipline_menu['menu']
             menu.delete(0, 'end')
@@ -177,6 +178,7 @@ class SchedulerApp:
             class_type = self.class_type_var.get()
 
             student_groups = get_student_groups_in_year(year, class_type)
+            assert student_groups is not None and type(student_groups) == list
 
             menu = self.student_group_menu['menu']
             menu.delete(0, 'end')
@@ -193,6 +195,7 @@ class SchedulerApp:
             student_group = self.student_group_var.get()
 
             time_slots = get_available_slots_for_teacher_and_student_group(teacher, student_group)
+            assert time_slots is not None and type(time_slots) == list
 
             menu = self.time_slot_menu['menu']
             menu.delete(0, 'end')
@@ -211,6 +214,7 @@ class SchedulerApp:
             rooms = get_available_rooms_for_time_slot_and_class_type(
                 time_slot, (class_type == 'Curs'), (class_type == 'Laborator'), (class_type == 'Seminar')
             )
+            assert rooms is not None and type(rooms) == list
 
             menu = self.room_type_menu['menu']
             menu.delete(0, 'end')
