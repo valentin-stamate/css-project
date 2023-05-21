@@ -57,6 +57,7 @@ class DatabaseConnection:
         return rows
 
     def insert_teacher(self, teacher: Teachers):
+        assert teacher is not None
         if self.get_teacher(teacher):
             return 1
         query = f"INSERT INTO Teachers (name, title) VALUES " \
@@ -65,6 +66,7 @@ class DatabaseConnection:
         return self.execute_query(query)
 
     def insert_discipline(self, discipline: Disciplines):
+        assert discipline is not None
         if self.get_discipline(discipline):
             return 1
         query = f"INSERT INTO Disciplines (name, semester, for_year_1, for_year_2, for_year_3, for_year_4, for_year_5, has_course, has_laboratory, has_seminary) VALUES " \
@@ -81,6 +83,7 @@ class DatabaseConnection:
         return self.execute_query(query)
 
     def insert_group(self, group: StudentGroups):
+        assert group is not None
         if self.get_student_group(group):
             return 1
         query = f"INSERT INTO StudentGroups (year, group_name) VALUES " \
@@ -89,6 +92,7 @@ class DatabaseConnection:
         return self.execute_query(query)
 
     def insert_room(self, room):
+        assert room is not None
         if self.get_room(room):
             print("Already exists")
             return 1
@@ -115,6 +119,7 @@ class DatabaseConnection:
         self.execute_query(query)
 
     def delete_entry(self, table, id):
+        assert type(id) == int
         base_query = f"DELETE FROM {table} where id = {id}"
         self.execute_query(base_query)
 
@@ -204,6 +209,8 @@ class DatabaseConnection:
         return rows
 
     def replace(self, rows, index: int, values):
+        assert rows != []
+        assert index < len(rows)
         updated_rows = []
         for row in rows:
             updated_row = list(row)
@@ -213,6 +220,7 @@ class DatabaseConnection:
 
     @classmethod
     def get_year(cls, row):
+        assert len(row) > 7
 
         if row[2] == 1:
             return Years.BACHELOR_YEAR_1

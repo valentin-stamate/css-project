@@ -2,9 +2,9 @@ from src.graphic_interface import SchedulerApp
 
 
 def main():
-    pass
+    SchedulerApp.start()
 
 
 if __name__ == '__main__':
-    # conn = DatabaseConnection().get_instance()
-    SchedulerApp.start()
+    main()
+

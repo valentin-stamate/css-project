@@ -13,7 +13,9 @@ class Utils:
     database_connection = DatabaseConnection.get_instance()
 
     @staticmethod
-    def add_teacher(name_entry, title_entry, tree, table,timeslots_tree):
+    def add_teacher(name_entry, title_entry, tree, table, timeslots_tree):
+        assert name_entry is not None
+        assert title_entry is not None
         name_val = name_entry.get()
         title_val = title_entry.get()
         if name_val != '' and title_val != '':
@@ -37,7 +39,8 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @staticmethod
-    def add_student_group(year, name_entry, tree, table,timeslots_tree):
+    def add_student_group(year, name_entry, tree, table, timeslots_tree):
+        assert name_entry is not None
         print(f"Year val {year}")
         year_val = Utils.convert_year(year)
         name_val = name_entry.get()
@@ -61,8 +64,11 @@ class Utils:
 
     @classmethod
     def add_discipline(cls, name_entry, year, semester, has_course, has_laboratory,
-                       has_seminary, tree, table,timeslots_tree):
-
+                       has_seminary, tree, table, timeslots_tree):
+        assert name_entry is not None
+        assert has_course is not None
+        assert has_laboratory is not None
+        assert has_seminary is not None
         year_val = Utils.convert_year(year)
         for_years = Utils.format_all_years(year_val)
         semester_val = Utils.convert_semester(semester)
@@ -93,7 +99,12 @@ class Utils:
             Utils.popup('Invalid data', "At least one input field is empty")
 
     @classmethod
-    def add_room(cls, name_entry, for_course, for_laboratory, for_seminary, tree, table,timeslots_tree):
+    def add_room(cls, name_entry, for_course, for_laboratory, for_seminary, tree, table, timeslots_tree):
+        assert name_entry is not None
+        assert for_course is not None
+        assert for_laboratory is not None
+        assert for_seminary is not None
+
         name_val = name_entry.get()
         for_course_val = for_course.get()
         for_laboratory_val = for_laboratory.get()
@@ -125,7 +136,6 @@ class Utils:
         assert teacher is not None and type(teacher) == str
         assert time_slot is not None and type(time_slot) == str
         assert class_type is not None and type(class_type) == str
-        assert room is not None and type(room) == str
         assert room is not None and type(room) == str
 
         if len(discipline.strip()) == 0 or len(student_group.strip()) == 0 or \
@@ -240,6 +250,8 @@ class Utils:
 
     @classmethod
     def load_data(cls, tree, table):
+        assert tree is not None
+        # assert table is None
         print(f"Loading data for {table}")
         tree.delete(*tree.get_children())
         rows = Utils.database_connection.get_instance().get_all_rows(table)
@@ -248,15 +260,20 @@ class Utils:
 
     @classmethod
     def convert_year(cls, year):
+        assert year is not None
         print(year)
         return Configuration.CONVERSION_YEARS_FOR_UI[year]
 
     @classmethod
     def convert_semester(cls, semester):
+        assert semester is not None
+        assert type(semester) == str
         return semester[-1]
 
     @classmethod
     def format_all_years(cls, year):
+        assert year is not None
+        assert type(year) == int
         print(f"Format {year}")
         if year == 1:
             return 1, 0, 0, 0, 0
