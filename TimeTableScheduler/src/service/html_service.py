@@ -20,6 +20,8 @@ class HTMLPage:
         self.elements = []
 
     def add(self, html_element):
+        assert isinstance(html_element, str)
+
         self.elements.append(html_element)
 
     def generate_html(self):
@@ -30,6 +32,8 @@ class HTMLPage:
 
         html += self.closing_header
 
+        assert isinstance(html, str)
+
         return html
 
 
@@ -37,6 +41,8 @@ class TimetablePage:
     """ A helper class to generate a generic timetable page """
 
     def __init__(self, title, headers: [], data: [], path):
+        assert isinstance(title, str) and isinstance(headers, list) and isinstance(data, list) and isinstance(path, str)
+
         self.title = title
         self.date = date.today()
         self.headers = headers
