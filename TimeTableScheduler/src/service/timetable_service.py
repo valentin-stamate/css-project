@@ -18,6 +18,8 @@ class TimetableGenerator:
 
     @staticmethod
     def categorize_by_year(classes: List[ProgrammedClass]):
+        assert isinstance(classes, list)
+
         categorized_classes = {}
 
         for p_class in classes:
@@ -25,12 +27,17 @@ class TimetableGenerator:
             if key not in categorized_classes:
                 categorized_classes[key] = []
 
+            assert isinstance(p_class, ProgrammedClass)
+
             categorized_classes[key].append(p_class)
 
+        assert isinstance(categorized_classes, dict)
         return categorized_classes
 
     @staticmethod
     def categorize_by_group_type(classes: List[ProgrammedClass]):
+        assert isinstance(classes, list)
+
         categorized_classes = {}
 
         for p_class in classes:
@@ -39,12 +46,17 @@ class TimetableGenerator:
             if key not in categorized_classes:
                 categorized_classes[key] = []
 
+            assert isinstance(p_class, ProgrammedClass)
+
             categorized_classes[key].append(p_class)
 
+        assert isinstance(categorized_classes, dict)
         return categorized_classes
 
     @staticmethod
     def categorize_by_group(classes: List[ProgrammedClass]):
+        assert isinstance(classes, list)
+
         categorized_classes = {}
 
         for p_class in classes:
@@ -53,12 +65,17 @@ class TimetableGenerator:
             if key not in categorized_classes:
                 categorized_classes[key] = []
 
+            assert isinstance(p_class, ProgrammedClass)
+
             categorized_classes[key].append(p_class)
 
+        assert isinstance(categorized_classes, dict)
         return categorized_classes
 
     @staticmethod
     def categorize_by_day(classes: List[ProgrammedClass]):
+        assert isinstance(classes, list)
+
         categorized_classes = {}
 
         for p_class in classes:
@@ -67,12 +84,17 @@ class TimetableGenerator:
             if key not in categorized_classes:
                 categorized_classes[key] = []
 
+            assert isinstance(p_class, ProgrammedClass)
+
             categorized_classes[key].append(p_class)
 
+        assert isinstance(categorized_classes, dict)
         return categorized_classes
 
     @staticmethod
     def categorize_by_professor(classes: List[ProgrammedClass]):
+        assert isinstance(classes, list)
+
         categorized_classes = {}
 
         for p_class in classes:
@@ -80,13 +102,18 @@ class TimetableGenerator:
                 if professor not in categorized_classes:
                     categorized_classes[professor] = []
 
+                assert isinstance(p_class, ProgrammedClass)
+
                 categorized_classes[professor].append(p_class)
 
+        assert isinstance(categorized_classes, dict)
         return categorized_classes
 
     @staticmethod
     def transform_for_timetable(data: List[ProgrammedClass], lambda_):
         """ Converts the categorized data of ProgrammedClass into a categorized data of list """
+
+        assert isinstance(data, list)
 
         categorized_by_days = TimetableGenerator.categorize_by_day(data)
 
@@ -96,14 +123,21 @@ class TimetableGenerator:
         for key in categorized_by_days.keys():
             elements = categorized_by_days[key]
 
+            assert isinstance(elements, list)
+
             new_data.append([key])
             for el in elements:
+                assert isinstance(el, ProgrammedClass)
+
                 new_data.append(lambda_(el))
 
+        assert isinstance(new_data, list)
         return new_data
 
     @staticmethod
     def categorize_by_rooms(classes: List[ProgrammedClass]):
+        assert isinstance(classes, list)
+
         categorized_classes = {}
 
         for p_class in classes:
@@ -112,12 +146,17 @@ class TimetableGenerator:
             if key not in categorized_classes:
                 categorized_classes[key] = []
 
+            assert isinstance(p_class, ProgrammedClass)
+
             categorized_classes[key].append(p_class)
 
+        assert isinstance(categorized_classes, dict)
         return categorized_classes
 
     @staticmethod
     def categorize_by_class(classes: List[ProgrammedClass]):
+        assert isinstance(classes, list)
+
         categorized_classes = {}
 
         for p_class in classes:
@@ -126,8 +165,11 @@ class TimetableGenerator:
             if key not in categorized_classes:
                 categorized_classes[key] = []
 
+            assert isinstance(p_class, ProgrammedClass)
+
             categorized_classes[key].append(p_class)
 
+        assert isinstance(categorized_classes, dict)
         return categorized_classes
 
     def generate_all(self):
@@ -151,6 +193,9 @@ class TimetableGenerator:
         html_page.add('<p></p><div>Generated with <b>SmartTimetable</b></div>')
 
         html = html_page.generate_html()
+
+        assert isinstance(html, str)
+
         file = open('./html/index.html', 'wt')
         file.write(html)
         file.close()
@@ -168,7 +213,12 @@ class TimetableGenerator:
         classes_list.sort()
         for year_key in classes_list:
             classes = classes_categorized_by_year[year_key]
+            assert isinstance(classes, list)
+
             year_key = int(year_key)
+
+            assert isinstance(year_key, int)
+
             html_name = f'classes_{year_key}.html'
 
             year_title = ('Master ' if year_key > 3 else '') + 'Anul ' + str(year_key if year_key <= 3 else year_key - 3)
@@ -176,6 +226,9 @@ class TimetableGenerator:
             html_page.add(f'<li><a href="pages/{html_name}">{year_title}</a>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
+
+            assert isinstance(data, list)
+
             html_table = TimetablePage(f'Orar Informatica, anul {year_key}', self.year_group_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
@@ -184,10 +237,15 @@ class TimetableGenerator:
             html_page.add('<ul>')
             for group_type_key in classes_categorized_by_group_type.keys():
                 classes = classes_categorized_by_group_type[group_type_key]
+                assert isinstance(classes, list)
+
                 html_name = f'classes_group_type_{group_type_key}.html'
                 html_page.add(f'<li><a href="pages/{html_name}">{"Grupa" if year_key > 3 else "Semianul"} {group_type_key}</a>')
 
                 data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_type_timetable)
+
+                assert isinstance(data, list)
+
                 html_table = TimetablePage(f'Orar {group_type_key}', self.year_group_headers, data,
                                            f'./html/pages/{html_name}')
                 html_table.generate_html()
@@ -198,14 +256,20 @@ class TimetableGenerator:
                 if len(classes_by_group) == 1:
                     continue
 
+                assert len(classes_by_group) != 1
+
                 html_page.add('<ul>')
                 for group_key in classes_by_group.keys():
                     classes = classes_by_group[group_key]
+                    assert isinstance(classes, list)
+
                     html_name = f'classes_{group_key}.html'
 
                     html_page.add(f'<li><a href="pages/{html_name}">{group_key}</a></li>')
 
                     data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_group_timetable)
+
+                    assert isinstance(data, list)
 
                     html_table = TimetablePage(f'Orar {group_key}', self.group_headers, data,
                                                f'./html/pages/{html_name}')
@@ -218,6 +282,9 @@ class TimetableGenerator:
         html_page.add('</ul>')
 
         html = html_page.generate_html()
+
+        assert isinstance(html, str)
+
         file = open('./html/students.html', 'wt')
         file.write(html)
         file.close()
@@ -229,21 +296,32 @@ class TimetableGenerator:
         html_page.add('<ul>')
 
         categorized_classes = self.categorize_by_professor(self.programmed_classes)
+
+        assert isinstance(categorized_classes, dict)
+
         classes_list = list(categorized_classes.keys())
         classes_list.sort()
         for professor in classes_list:
             classes = categorized_classes[professor]
+            assert isinstance(classes, list)
+
             html_name = f'p_{professor}.html'
 
             html_page.add(f'<li><a href="pages/{html_name}">{professor}</a></li>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_professor_timetable)
+
+            assert isinstance(data, list)
+
             html_table = TimetablePage(f'Orar {professor}', self.professor_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
         html_page.add('</ul>')
 
         html = html_page.generate_html()
+
+        assert isinstance(html, str)
+
         file = open('./html/professors.html', 'wt')
         file.write(html)
         file.close()
@@ -255,21 +333,32 @@ class TimetableGenerator:
         html_page.add('<ul>')
 
         categorized_classes = self.categorize_by_rooms(self.programmed_classes)
+
+        assert isinstance(categorized_classes, dict)
+
         classes_list = list(categorized_classes.keys())
         classes_list.sort()
         for room in classes_list:
             classes = categorized_classes[room]
+            assert isinstance(classes, list)
+
             html_name = f'r_{room}.html'
 
             html_page.add(f'<li><a href="pages/{html_name}">{room}</a></li>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_room_timetable)
+
+            assert isinstance(data, list)
+
             html_table = TimetablePage(f'Orar Sala {room}', self.room_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
         html_page.add('</ul>')
 
         html = html_page.generate_html()
+
+        assert isinstance(html, str)
+
         file = open('./html/rooms.html', 'wt')
         file.write(html)
         file.close()
@@ -281,21 +370,32 @@ class TimetableGenerator:
         html_page.add('<ul>')
 
         categorized_classes = self.categorize_by_class(self.programmed_classes)
+
+        assert isinstance(categorized_classes, dict)
+
         classes_list = list(categorized_classes.keys())
         classes_list.sort()
         for class_name in classes_list:
             classes = categorized_classes[class_name]
+            assert isinstance(classes, list)
+
             html_name = f'd_{class_name}.html'
 
             html_page.add(f'<li><a href="pages/{html_name}">{class_name}</a></li>')
 
             data = self.transform_for_timetable(classes, ProgrammedClass.get_list_for_class_timetable)
+
+            assert isinstance(data, list)
+
             html_table = TimetablePage(f'Orar Disciplina {class_name}', self.room_headers, data, f'./html/pages/{html_name}')
             html_table.generate_html()
 
         html_page.add('</ul>')
 
         html = html_page.generate_html()
+
+        assert isinstance(html, str)
+
         file = open('./html/classes.html', 'wt')
         file.write(html)
         file.close()
