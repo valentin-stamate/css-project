@@ -210,7 +210,6 @@ class DatabaseConnection:
 
     def replace(self, rows, index: int, values):
         assert rows != []
-        assert index < len(rows)
         updated_rows = []
         for row in rows:
             updated_row = list(row)
@@ -220,7 +219,6 @@ class DatabaseConnection:
 
     @classmethod
     def get_year(cls, row):
-        assert len(row) > 7
 
         if row[2] == 1:
             return Years.BACHELOR_YEAR_1
